@@ -41,7 +41,7 @@
               "type": "DefaultString",
               "remark": "",
               "chnname": "头像",
-              "notNull": true
+              "notNull": false
             },
             {
               "name": "id_card",
@@ -74,16 +74,18 @@
             {
               "name": "status",
               "type": "DefaultString",
-              "remark": "",
+              "remark": "1-正常，2-封禁，3-已注销",
               "chnname": "用户状态",
-              "notNull": true
+              "notNull": true,
+              "defaultValue": "1"
             },
             {
               "name": "authority",
               "type": "TINYINT",
               "remark": "1-游客，2-用户，3-用户，4-封禁",
               "chnname": "用户权限",
-              "notNull": true
+              "notNull": true,
+              "defaultValue": "2"
             },
             {
               "name": "credibility",
@@ -97,7 +99,7 @@
               "name": "create_time",
               "type": "DateTime",
               "remark": "",
-              "chnname": "创建时间",
+              "chnname": "注册时间",
               "notNull": true
             }
           ],
@@ -148,7 +150,7 @@
               "relationNoShow": true
             }
           ],
-          "chnname": "user"
+          "chnname": "用户信息表"
         },
         {
           "title": "account",
@@ -223,14 +225,931 @@
               "relationNoShow": true
             }
           ],
-          "chnname": "account"
+          "chnname": "账号密码表"
+        },
+        {
+          "title": "commodity",
+          "fields": [
+            {
+              "name": "commodity_id",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "商品id",
+              "notNull": true,
+              "pk": true
+            },
+            {
+              "name": "user_id",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "卖家id",
+              "notNull": true
+            },
+            {
+              "name": "name",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "名称",
+              "notNull": true
+            },
+            {
+              "name": "price",
+              "type": "Money",
+              "remark": "",
+              "chnname": "价格",
+              "notNull": true
+            },
+            {
+              "name": "image",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "图片",
+              "notNull": true
+            },
+            {
+              "name": "number",
+              "type": "Integer",
+              "remark": "不能为负数",
+              "chnname": "数量",
+              "notNull": true,
+              "defaultValue": ""
+            },
+            {
+              "name": "Introduction",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "介绍",
+              "notNull": true
+            },
+            {
+              "name": "address",
+              "type": "DefaultString",
+              "remark": "第四饭堂C15",
+              "chnname": "发货地址"
+            },
+            {
+              "name": "Label",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "标签分类",
+              "notNull": true
+            },
+            {
+              "name": "contact",
+              "type": "DefaultString",
+              "remark": "微信or电话",
+              "chnname": "联系方式",
+              "notNull": true
+            },
+            {
+              "name": "status",
+              "type": "TINYINT",
+              "remark": "1-待审核，2-审核通过，3-审核不合格",
+              "chnname": "状态",
+              "notNull": true,
+              "defaultValue": "1"
+            },
+            {
+              "name": "version",
+              "type": "TINYINT",
+              "remark": "",
+              "chnname": "悲观锁",
+              "notNull": true,
+              "defaultValue": "0"
+            }
+          ],
+          "indexs": [],
+          "headers": [
+            {
+              "fieldName": "chnname",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "name",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "type",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "dataType",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "remark",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "pk",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "notNull",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "autoIncrement",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "defaultValue",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "relationNoShow",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "uiHint",
+              "relationNoShow": true
+            }
+          ],
+          "chnname": "商品表"
+        },
+        {
+          "title": "order",
+          "fields": [
+            {
+              "name": "order_id",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "订单id",
+              "pk": true,
+              "notNull": true
+            },
+            {
+              "name": "commodity_id",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "商品",
+              "notNull": true
+            },
+            {
+              "name": "buyer",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "买家",
+              "notNull": true
+            },
+            {
+              "name": "seller",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "卖家",
+              "notNull": true
+            },
+            {
+              "name": "number",
+              "type": "Integer",
+              "remark": "不能为负数",
+              "chnname": "商品数量",
+              "notNull": true,
+              "defaultValue": "1"
+            },
+            {
+              "name": "address",
+              "type": "ShortString",
+              "remark": "",
+              "chnname": "收货地址",
+              "notNull": true
+            },
+            {
+              "name": "status",
+              "type": "TINYINT",
+              "remark": "1-未发货，2-已发货，3已签收，4-申请退款，5-退款成功，6-客服介入，7-订单关闭",
+              "chnname": "状态",
+              "defaultValue": "1",
+              "notNull": true
+            },
+            {
+              "name": "create_time",
+              "type": "DateTime",
+              "remark": "",
+              "chnname": "创建时间",
+              "notNull": true
+            },
+            {
+              "name": "end_time",
+              "type": "DateTime",
+              "remark": "",
+              "chnname": "结束时间",
+              "notNull": false
+            }
+          ],
+          "indexs": [],
+          "headers": [
+            {
+              "fieldName": "chnname",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "name",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "type",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "dataType",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "remark",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "pk",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "notNull",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "autoIncrement",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "defaultValue",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "relationNoShow",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "uiHint",
+              "relationNoShow": true
+            }
+          ],
+          "chnname": "订单表"
+        },
+        {
+          "title": "comment",
+          "fields": [
+            {
+              "name": "comment_id",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "评论id",
+              "pk": true,
+              "notNull": true
+            },
+            {
+              "name": "order_id",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "订单id",
+              "notNull": true,
+              "pk": true
+            },
+            {
+              "name": "commodity_id",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "商品id",
+              "notNull": true
+            },
+            {
+              "name": "comment",
+              "type": "MiddleString",
+              "remark": "",
+              "chnname": "评价内容",
+              "notNull": true
+            },
+            {
+              "name": "imgae",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "评价图片",
+              "notNull": false
+            },
+            {
+              "name": "untitled4",
+              "type": "Integer",
+              "remark": "",
+              "chnname": "喜欢人数",
+              "notNull": true,
+              "defaultValue": "1"
+            },
+            {
+              "name": "untitled7",
+              "type": "Integer",
+              "remark": "",
+              "chnname": "不喜欢人数",
+              "notNull": false,
+              "defaultValue": ""
+            },
+            {
+              "name": "untitled5",
+              "type": "DateTime",
+              "remark": "",
+              "chnname": "创建时间",
+              "notNull": true
+            }
+          ],
+          "indexs": [],
+          "headers": [
+            {
+              "fieldName": "chnname",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "name",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "type",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "dataType",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "remark",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "pk",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "notNull",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "autoIncrement",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "defaultValue",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "relationNoShow",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "uiHint",
+              "relationNoShow": true
+            }
+          ],
+          "chnname": "评论表"
+        },
+        {
+          "title": "shoppingcart",
+          "fields": [
+            {
+              "name": "user_id",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "用户id",
+              "pk": true,
+              "notNull": true
+            },
+            {
+              "name": "commodity_id",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "商品id",
+              "pk": true,
+              "notNull": true
+            },
+            {
+              "name": "number",
+              "type": "Integer",
+              "remark": "不能是负数",
+              "chnname": "商品数量",
+              "notNull": true,
+              "defaultValue": "1"
+            },
+            {
+              "name": "isCheck",
+              "type": "TINYINT",
+              "remark": "1-选中，2-未选中",
+              "chnname": "是否选中",
+              "notNull": true,
+              "defaultValue": "2"
+            }
+          ],
+          "indexs": [],
+          "headers": [
+            {
+              "fieldName": "chnname",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "name",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "type",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "dataType",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "remark",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "pk",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "notNull",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "autoIncrement",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "defaultValue",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "relationNoShow",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "uiHint",
+              "relationNoShow": true
+            }
+          ],
+          "chnname": "购物车表"
+        },
+        {
+          "title": "常用地址",
+          "fields": [
+            {
+              "name": "user_id",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "用户id",
+              "pk": true,
+              "notNull": true
+            },
+            {
+              "name": "address",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "常用地址",
+              "pk": true,
+              "notNull": true
+            },
+            {
+              "name": "create_time",
+              "type": "DateTime",
+              "remark": "",
+              "chnname": "创建时间",
+              "notNull": true
+            }
+          ],
+          "indexs": [],
+          "headers": [
+            {
+              "fieldName": "chnname",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "name",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "type",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "dataType",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "remark",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "pk",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "notNull",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "autoIncrement",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "defaultValue",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "relationNoShow",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "uiHint",
+              "relationNoShow": true
+            }
+          ],
+          "chnname": "address"
+        },
+        {
+          "title": "Banned list",
+          "fields": [
+            {
+              "name": "black_id",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "id"
+            },
+            {
+              "name": "user_id",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "用户id"
+            },
+            {
+              "name": "id_card",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "身份证"
+            },
+            {
+              "name": "create_time",
+              "type": "DateTime",
+              "remark": "",
+              "chnname": "创建时间"
+            }
+          ],
+          "indexs": [],
+          "headers": [
+            {
+              "fieldName": "chnname",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "name",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "type",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "dataType",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "remark",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "pk",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "notNull",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "autoIncrement",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "defaultValue",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "relationNoShow",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "uiHint",
+              "relationNoShow": true
+            }
+          ],
+          "chnname": "系统封禁用户"
         }
       ],
       "graphCanvas": {
-        "nodes": [],
-        "edges": []
+        "nodes": [
+          {
+            "shape": "table",
+            "title": "account",
+            "moduleName": false,
+            "x": 130,
+            "y": 150,
+            "id": "195d95e4"
+          },
+          {
+            "shape": "table",
+            "title": "order",
+            "moduleName": false,
+            "x": 810,
+            "y": 570,
+            "id": "efd71121"
+          },
+          {
+            "shape": "table",
+            "title": "comment",
+            "moduleName": false,
+            "x": 1230,
+            "y": 580,
+            "id": "a967fbf9"
+          },
+          {
+            "shape": "table",
+            "title": "user",
+            "moduleName": false,
+            "x": 480,
+            "y": 420,
+            "id": "38812c80"
+          },
+          {
+            "shape": "table",
+            "title": "shoppingcart",
+            "moduleName": false,
+            "x": 840,
+            "y": 80,
+            "id": "fc64903f"
+          },
+          {
+            "shape": "table",
+            "title": "commodity",
+            "moduleName": false,
+            "x": 1270,
+            "y": 290,
+            "id": "909c3c1d"
+          },
+          {
+            "shape": "table",
+            "title": "常用地址",
+            "moduleName": false,
+            "x": 140,
+            "y": 390,
+            "id": "370e5bea"
+          },
+          {
+            "shape": "table",
+            "title": "Banned list",
+            "moduleName": false,
+            "x": 140,
+            "y": 710,
+            "id": "051dc866"
+          }
+        ],
+        "edges": [
+          {
+            "shape": "erdRelation",
+            "relation": "0,n:1",
+            "source": "195d95e4",
+            "target": "38812c80",
+            "id": "00f6a7eb",
+            "controlPoints": [
+              {
+                "x": 241.3603515625,
+                "y": 182.86111111111111
+              },
+              {
+                "x": 342.2958984375,
+                "y": 312.12931034482756
+              }
+            ],
+            "sourceAnchor": 5,
+            "targetAnchor": 0
+          },
+          {
+            "shape": "erdRelation",
+            "relation": "0,n:1",
+            "source": "38812c80",
+            "target": "efd71121",
+            "id": "42dd291a",
+            "controlPoints": [
+              {
+                "x": 617.7041015625,
+                "y": 312.12931034482756
+              },
+              {
+                "x": 670.640625,
+                "y": 542.3690476190476
+              }
+            ],
+            "sourceAnchor": 1,
+            "targetAnchor": 4
+          },
+          {
+            "shape": "erdRelation",
+            "relation": "0,n:1",
+            "source": "38812c80",
+            "target": "fc64903f",
+            "id": "ae7bcaf9",
+            "controlPoints": [
+              {
+                "x": 617.7041015625,
+                "y": 312.12931034482756
+              },
+              {
+                "x": 699.140625,
+                "y": 62.340909090909086
+              }
+            ],
+            "sourceAnchor": 1,
+            "targetAnchor": 0
+          },
+          {
+            "shape": "erdRelation",
+            "relation": "0,n:1",
+            "source": "fc64903f",
+            "target": "909c3c1d",
+            "id": "361125fd",
+            "controlPoints": [
+              {
+                "x": 980.859375,
+                "y": 82.52272727272728
+              },
+              {
+                "x": 1139.724609375,
+                "y": 202.15
+              }
+            ],
+            "sourceAnchor": 3,
+            "targetAnchor": 0
+          },
+          {
+            "shape": "erdRelation",
+            "relation": "0,n:1",
+            "source": "efd71121",
+            "target": "909c3c1d",
+            "id": "e2acf03d",
+            "controlPoints": [
+              {
+                "x": 949.359375,
+                "y": 502.17857142857144
+              },
+              {
+                "x": 1139.724609375,
+                "y": 202.15
+              }
+            ],
+            "sourceAnchor": 1,
+            "targetAnchor": 0
+          },
+          {
+            "shape": "erdRelation",
+            "relation": "0,n:1",
+            "source": "a967fbf9",
+            "target": "efd71121",
+            "id": "059520b7",
+            "controlPoints": [
+              {
+                "x": 1083.390625,
+                "y": 542.3026315789474
+              },
+              {
+                "x": 949.359375,
+                "y": 502.17857142857144
+              }
+            ],
+            "sourceAnchor": 2,
+            "targetAnchor": 1
+          },
+          {
+            "shape": "erdRelation",
+            "relation": "0,n:1",
+            "source": "38812c80",
+            "target": "370e5bea",
+            "id": "e93e96db",
+            "controlPoints": [
+              {
+                "x": 342.2958984375,
+                "y": 312.12931034482756
+              },
+              {
+                "x": 266.109375,
+                "y": 382.4166666666667
+              }
+            ],
+            "sourceAnchor": 0,
+            "targetAnchor": 1
+          },
+          {
+            "shape": "erdRelation",
+            "relation": "0,n:1",
+            "source": "051dc866",
+            "target": "38812c80",
+            "id": "36b489d3",
+            "controlPoints": [
+              {
+                "x": 262.5224609375,
+                "y": 712.5227272727273
+              },
+              {
+                "x": 342.2958984375,
+                "y": 312.12931034482756
+              }
+            ],
+            "sourceAnchor": 3,
+            "targetAnchor": 0
+          }
+        ]
       },
-      "associations": []
+      "associations": [
+        {
+          "relation": "0,n:1",
+          "from": {
+            "entity": "account",
+            "field": "user_id"
+          },
+          "to": {
+            "entity": "user",
+            "field": "user_id"
+          }
+        },
+        {
+          "relation": "0,n:1",
+          "from": {
+            "entity": "user",
+            "field": "user_id"
+          },
+          "to": {
+            "entity": "order",
+            "field": "buyer"
+          }
+        },
+        {
+          "relation": "0,n:1",
+          "from": {
+            "entity": "user",
+            "field": "user_id"
+          },
+          "to": {
+            "entity": "shoppingcart",
+            "field": "user_id"
+          }
+        },
+        {
+          "relation": "0,n:1",
+          "from": {
+            "entity": "shoppingcart",
+            "field": "commodity_id"
+          },
+          "to": {
+            "entity": "commodity",
+            "field": "commodity_id"
+          }
+        },
+        {
+          "relation": "0,n:1",
+          "from": {
+            "entity": "order",
+            "field": "order_id"
+          },
+          "to": {
+            "entity": "commodity",
+            "field": "commodity_id"
+          }
+        },
+        {
+          "relation": "0,n:1",
+          "from": {
+            "entity": "comment",
+            "field": "order_id"
+          },
+          "to": {
+            "entity": "order",
+            "field": "order_id"
+          }
+        },
+        {
+          "relation": "0,n:1",
+          "from": {
+            "entity": "user",
+            "field": "user_id"
+          },
+          "to": {
+            "entity": "常用地址",
+            "field": "user_id"
+          }
+        },
+        {
+          "relation": "0,n:1",
+          "from": {
+            "entity": "Banned list",
+            "field": "user_id"
+          },
+          "to": {
+            "entity": "user",
+            "field": "user_id"
+          }
+        }
+      ]
     }
   ],
   "dataTypeDomains": {
