@@ -34,21 +34,24 @@
               "type": "DefaultString",
               "remark": "",
               "chnname": "真实姓名",
-              "notNull": true
+              "notNull": false,
+              "defaultValue": "未认证"
             },
             {
               "name": "head_portrait",
               "type": "DefaultString",
               "remark": "",
               "chnname": "头像",
-              "notNull": false
+              "notNull": false,
+              "defaultValue": "未认证"
             },
             {
               "name": "id_card",
               "type": "DefaultString",
               "remark": "",
               "chnname": "身份证",
-              "notNull": true
+              "notNull": false,
+              "defaultValue": "未认证"
             },
             {
               "name": "student_id",
@@ -85,7 +88,7 @@
               "remark": "1-游客，2-用户，3-用户，4-封禁",
               "chnname": "用户权限",
               "notNull": true,
-              "defaultValue": "2"
+              "defaultValue": "1"
             },
             {
               "name": "credibility",
@@ -101,6 +104,12 @@
               "remark": "",
               "chnname": "注册时间",
               "notNull": true
+            },
+            {
+              "name": "Logout_time",
+              "type": "DateTime",
+              "remark": "",
+              "chnname": "注销时间"
             }
           ],
           "indexs": [],
@@ -417,9 +426,9 @@
             {
               "name": "status",
               "type": "TINYINT",
-              "remark": "1-未发货，2-已发货，3已签收，4-申请退款，5-退款成功，6-客服介入，7-订单关闭",
+              "remark": "0-待付款，1-未发货，2-已发货，3已签收，4-申请退款，5-退款成功，6-客服介入，7-订单关闭",
               "chnname": "状态",
-              "defaultValue": "1",
+              "defaultValue": "0",
               "notNull": true
             },
             {
@@ -532,15 +541,15 @@
               "remark": "",
               "chnname": "喜欢人数",
               "notNull": true,
-              "defaultValue": "1"
+              "defaultValue": "0"
             },
             {
               "name": "untitled7",
               "type": "Integer",
               "remark": "",
               "chnname": "不喜欢人数",
-              "notNull": false,
-              "defaultValue": ""
+              "notNull": true,
+              "defaultValue": "0"
             },
             {
               "name": "untitled5",
@@ -685,7 +694,7 @@
           "chnname": "购物车表"
         },
         {
-          "title": "常用地址",
+          "title": "address",
           "fields": [
             {
               "name": "user_id",
@@ -758,7 +767,7 @@
               "relationNoShow": true
             }
           ],
-          "chnname": "address"
+          "chnname": "常用地址"
         },
         {
           "title": "Banned list",
@@ -890,7 +899,7 @@
           },
           {
             "shape": "table",
-            "title": "常用地址",
+            "title": "address",
             "moduleName": false,
             "x": 140,
             "y": 390,
@@ -1023,25 +1032,6 @@
           {
             "shape": "erdRelation",
             "relation": "0,n:1",
-            "source": "38812c80",
-            "target": "370e5bea",
-            "id": "e93e96db",
-            "controlPoints": [
-              {
-                "x": 342.2958984375,
-                "y": 312.12931034482756
-              },
-              {
-                "x": 266.109375,
-                "y": 382.4166666666667
-              }
-            ],
-            "sourceAnchor": 0,
-            "targetAnchor": 1
-          },
-          {
-            "shape": "erdRelation",
-            "relation": "0,n:1",
             "source": "051dc866",
             "target": "38812c80",
             "id": "36b489d3",
@@ -1134,7 +1124,7 @@
             "field": "user_id"
           },
           "to": {
-            "entity": "常用地址",
+            "entity": "address",
             "field": "user_id"
           }
         },
