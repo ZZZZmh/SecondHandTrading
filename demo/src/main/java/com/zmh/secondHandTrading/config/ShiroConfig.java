@@ -50,9 +50,10 @@ public class ShiroConfig {
         filterMap.put("/administrator/**","perms[user:Administrator]");
 
         // 无认证则跳转到登入界面
-        shiroFilterFactoryBean.setLoginUrl("/toLogin");
+        shiroFilterFactoryBean.setLoginUrl("/public/Login");
+
         // 未经授权则跳转到错误界面
-        shiroFilterFactoryBean.setUnauthorizedUrl("/noauth");
+        shiroFilterFactoryBean.setUnauthorizedUrl("/public/noauth");
 
         // 设置权限集
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterMap);

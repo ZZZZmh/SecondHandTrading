@@ -39,3 +39,15 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
 
+################################
+# 配置 pagehelper
+################################
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+
+server:
+  port: 8081

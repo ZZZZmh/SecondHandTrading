@@ -50,10 +50,15 @@ public class TestController {
         return "test";
     }
 
-    @RequestMapping("test/redis/add")
+    @RequestMapping("/test/redis/add")
     public void testAdd(){
         redisTemplate.opsForGeo().add("cityGeoKey",new Point(116.40528,39.90498),"北京");
         redisTemplate.opsForGeo().add("cityGeoKey",new Point(121.48941,31.40527),"上海");
         redisTemplate.opsForGeo().add("cityGeoKey",new Point(113.88308,22.55329),"深圳");
+    }
+
+    @GetMapping("/administrator/test")
+    public void String(){
+        System.out.println("权限测试");
     }
 }

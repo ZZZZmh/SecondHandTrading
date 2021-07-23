@@ -7,6 +7,8 @@ package com.zmh.secondHandTrading.config;/**
  */
 
 
+import com.zmh.secondHandTrading.entity.pojo.Account;
+import com.zmh.secondHandTrading.mapper.LoginMapper;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -17,7 +19,6 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
  *@ClassName UserRealm
@@ -28,11 +29,31 @@ import java.util.List;
  */
 public class UserRealm  extends AuthorizingRealm {
 
+    @Autowired
+    LoginMapper loginMapper;
+
     // 授权
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         System.out.println("执行了=》授权");
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+        //拿到user对象
+        Subject subject = SecurityUtils.getSubject();
+        Account account= (Account) subject.getPrincipal();
+        // 当前用户授权
+        int power = account.getPower();
+        if(power == 1){
+            info.addStringPermission("user:Tourist");
+            System.out.println("Tourist");
+        }
+        else if(power == 2){
+            info.addStringPermission("user:Certification");
+            System.out.println("Certification");
+        }
+        else if(power ==3){
+            info.addStringPermission("user:Administrator");
+            System.out.println("Administrator");
+        }
         return info;
     }
 
@@ -40,7 +61,16 @@ public class UserRealm  extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         System.out.println("执行了=》认证");
-        return new SimpleAuthenticationInfo();
-
+        //获取用户token
+        UsernamePasswordToken userToken = (UsernamePasswordToken) authenticationToken;
+        Account account = loginMapper.selectAccount(userToken.getUsername());
+        // 用户名验证
+        if(account == null){
+            return null;
+        }
+        // 密码验证
+        // shiro 安全框架负责验证  MD5密码加密  MD5言文加密
+        // 第一个参数为返回当前用户（此处返回查询到的User给doGetAuthorizationInfo授权）,放入subject中
+        return new SimpleAuthenticationInfo(account,account.getPassword(),"");
     }
 }
