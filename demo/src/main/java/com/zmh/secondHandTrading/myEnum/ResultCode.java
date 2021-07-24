@@ -1,6 +1,6 @@
-package com.zmh.secondHandTrading.until;
+package com.zmh.secondHandTrading.myEnum;
 
-public enum ResultCode implements com.zmh.secondHandTrading.until.IErrorCode {
+public enum ResultCode implements IErrorCode {
 
     //通用结果
     OTHERS(100,"其他异常"),

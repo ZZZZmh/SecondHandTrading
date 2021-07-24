@@ -7,6 +7,15 @@ package com.zmh.secondHandTrading.controller;/**
  */
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.google.gson.Gson;
+import com.qiniu.common.QiniuException;
+import com.qiniu.http.Response;
+import com.qiniu.storage.Configuration;
+import com.qiniu.storage.Region;
+import com.qiniu.storage.UploadManager;
+import com.qiniu.storage.model.DefaultPutRet;
+import com.qiniu.util.Auth;
+import com.zmh.secondHandTrading.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Point;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -58,7 +67,37 @@ public class TestController {
     }
 
     @GetMapping("/administrator/test")
-    public void String(){
+    public void testAdministrator(){
         System.out.println("权限测试");
+    }
+
+    @GetMapping("/administrator/image")
+    public void testimage(){
+        Configuration cfg = new Configuration(Region.huanan());
+        UploadManager uploadManager = new UploadManager(cfg);
+
+        String accessKey = "h0-z4g_5rx2d0yoRZ7itl8LduRW5nAmaByzxrbyE";      //AccessKey的值
+        String secretKey = "****************************************";      //SecretKey的值
+        String bucket = "zmh-s-h-t";                                  //存储空间名
+        String localFilePath = "C:\\Users\\ASUS\\Desktop\\91281061_p0.png";       //上传图片路径
+
+        String key = "test.png";                                               //在七牛云中图片的命名
+        Auth auth = Auth.create(accessKey, secretKey);
+        String upToken = auth.uploadToken(bucket);
+        try {
+            Response response = uploadManager.put(localFilePath, key, upToken);
+            //解析上传成功的结果
+            DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
+            System.out.println(putRet.key);
+            System.out.println(putRet.hash);
+        } catch (QiniuException ex) {
+            Response r = ex.response;
+            System.err.println(r.toString());
+            try {
+                System.err.println(r.bodyString());
+            } catch (QiniuException ex2) {
+                //ignore
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.zmh.secondHandTrading.until;
+package com.zmh.secondHandTrading.util;
 
 import com.github.pagehelper.PageInfo;
 import lombok.Data;

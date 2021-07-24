@@ -6,17 +6,25 @@ package com.zmh.secondHandTrading.controller;/**
  * @date 2021/7/23 15:23
  */
 
-import com.zmh.secondHandTrading.until.CommonResult;
-import com.zmh.secondHandTrading.until.ResultCode;
+import com.zmh.secondHandTrading.myException.EmailException;
+import com.zmh.secondHandTrading.util.CommonResult;
+import com.zmh.secondHandTrading.util.EmailTool;
+import com.zmh.secondHandTrading.myEnum.ResultCode;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
-import org.springframework.ui.Model;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.mail.MessagingException;
+import javax.servlet.http.HttpSession;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 
 /**
  *@ClassName LoginController
@@ -27,8 +35,11 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class LoginController {
+    @Autowired
+    private EmailTool emailTool;
 
     // 注册
+    @PostMapping("/public/register")
     public String register(){
         return null;
     }
@@ -42,36 +53,67 @@ public class LoginController {
 
     // 账号密码登入
     @PostMapping("/public/tologin")
-    public CommonResult tologin(String username, String password){
+    public CommonResult tologin(@NotNull @RequestParam String username, @NotNull @RequestParam String password){
         //获取当前输入的用户
-        Subject subject = SecurityUtils.getSubject();
+        Subject currentUser = SecurityUtils.getSubject();
         //封装用户的数据
         UsernamePasswordToken token = new UsernamePasswordToken(username,password);
         //登录，没有异常就说明登录成功
         try {
-            subject.login(token);
+            currentUser.login(token);
             return CommonResult.success("登入成功");
         } catch (UnknownAccountException e) {
-            return CommonResult.failed(ResultCode.FAILED,"账号错误");
+            return CommonResult.failed(ResultCode.USER_NOT_EXISTENT,"账号错误");
         }catch (IncorrectCredentialsException e){
             return CommonResult.failed(ResultCode.FAILED,"密码错误");
         }
     }
 
-    // 电话登入（发送短信）
-    public String telephoneLogin(){
-        return null;
+    // 发送邮件
+    @PostMapping("/public/sendEmail")
+    public CommonResult sendEmail(HttpSession session,@NotNull @RequestParam @Email String emailAddress){
+        try {
+            emailTool.contextComplexLoad(session,emailAddress);
+        }  catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        return CommonResult.success(ResultCode.SUCCESS,"发送成功");
     }
 
-    // 邮箱登入（发送邮件）
-    public String emailLogin(){
-        return null;
+
+    // 邮箱验证
+    @GetMapping("/public/verifyEmail")
+    public CommonResult verifyEmail(HttpSession session,@NotNull @RequestParam String code){
+        String encode = (String) session.getAttribute("emailCode");
+        if(code.equals(encode)){
+            return CommonResult.success(ResultCode.SUCCESS,"成功验证");
+        }
+        return CommonResult.success(ResultCode.FAILED,"验证失败");
     }
 
     // 错误页面
     @GetMapping("/public/noauth")
     public CommonResult noauth(){
         return CommonResult.failed(ResultCode.UNAUTHORIZED,"未经授权");
+    }
+
+    // 注销退出
+    @GetMapping("/public/logout")
+    public CommonResult logout(){
+        Subject currentUser = SecurityUtils.getSubject();
+        currentUser.logout();
+        return CommonResult.success("退出登入成功");
+    }
+
+
+    // 电话登入==（发送短信）
+    public String sendTelephone(){
+        return null;
+    }
+
+    // 电话验证
+    public String verifyTelephone(){
+        return null;
     }
 
 }

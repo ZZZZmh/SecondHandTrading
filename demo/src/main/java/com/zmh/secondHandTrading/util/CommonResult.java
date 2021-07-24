@@ -1,9 +1,11 @@
-package com.zmh.secondHandTrading.until;
+package com.zmh.secondHandTrading.util;
 
 /**
  * 公共数据返回体
  */
 
+import com.zmh.secondHandTrading.myEnum.IErrorCode;
+import com.zmh.secondHandTrading.myEnum.ResultCode;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
