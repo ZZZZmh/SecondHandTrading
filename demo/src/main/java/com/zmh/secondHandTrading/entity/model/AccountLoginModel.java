@@ -1,10 +1,9 @@
-package com.zmh.secondHandTrading.entity.pojo;
-/**
- * @title: Login
+package com.zmh.secondHandTrading.entity.model;/**
+ * @title: AccountLoginModel
  * @projectName demo
  * @description: TODO
  * @author zmh
- * @date 2021/7/23 14:40
+ * @date 2021/7/25 15:12
  */
 
 import lombok.AllArgsConstructor;
@@ -12,20 +11,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- *@ClassName Login
+ *@ClassName AccountLoginModel
  *@Description TODO
  *@Author ASUS
- *@Date 2021/7/23 14:40
+ *@Date 2021/7/25 15:12
  *@Version 1.0
  */
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
-public class Account {
+public class AccountLoginModel {
     private String account;
     private String password;
-    private String userId;
-    private String email;
-    private String telephone;
-    private int power;
 }

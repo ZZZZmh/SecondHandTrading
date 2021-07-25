@@ -6,7 +6,7 @@ package com.zmh.secondHandTrading.mapper;/**
  * @date 2021/7/23 14:24
  */
 
-import com.zmh.secondHandTrading.entity.pojo.User;
+import com.zmh.secondHandTrading.entity.pojo.Userinfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -20,5 +20,5 @@ import org.springframework.stereotype.Repository;
 @Repository("UserMapper")
 @Mapper
 public interface UserMapper {
-    public User selectAllInformation(String userId);
+    public Userinfo selectAllInformation(String userId);
 }

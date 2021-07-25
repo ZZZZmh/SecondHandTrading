@@ -1,5 +1,6 @@
 package com.zmh.secondHandTrading.service;
 
+import com.zmh.secondHandTrading.entity.model.AccountLoginModel;
 import com.zmh.secondHandTrading.entity.pojo.Account;
 
 /**
@@ -11,4 +12,5 @@ import com.zmh.secondHandTrading.entity.pojo.Account;
  */
 public interface LoginService {
     public Account login(String account);
+    public AccountLoginModel emailLogin(String email);
 }

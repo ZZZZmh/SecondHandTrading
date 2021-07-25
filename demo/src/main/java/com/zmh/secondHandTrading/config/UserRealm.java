@@ -43,14 +43,20 @@ public class UserRealm  extends AuthorizingRealm {
         // 当前用户授权
         int power = account.getPower();
         if(power == 1){
+            // 只有实名认证权限
             info.addStringPermission("user:Tourist");
             System.out.println("Tourist");
         }
         else if(power == 2){
+            // 拥有实名认证权限
+            info.addStringPermission("user:Tourist");
             info.addStringPermission("user:Certification");
             System.out.println("Certification");
         }
         else if(power ==3){
+            // 管理员拥有所有权限
+            info.addStringPermission("user:Tourist");
+            info.addStringPermission("user:Certification");
             info.addStringPermission("user:Administrator");
             System.out.println("Administrator");
         }

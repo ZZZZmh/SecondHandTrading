@@ -1,5 +1,6 @@
 package com.zmh.secondHandTrading.mapper;
 
+import com.zmh.secondHandTrading.entity.model.AccountLoginModel;
 import com.zmh.secondHandTrading.entity.pojo.Account;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -15,4 +16,5 @@ import org.springframework.stereotype.Repository;
 @Mapper
 public interface LoginMapper {
     public Account selectAccount(String account);
+    public AccountLoginModel emaillogin(String email);
 }

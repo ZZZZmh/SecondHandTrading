@@ -1,9 +1,9 @@
-package com.zmh.secondHandTrading.entity.pojo;/**
- * @title: User
+package com.zmh.secondHandTrading.entity.resp;/**
+ * @title: UserInfoResp
  * @projectName demo
  * @description: TODO
  * @author zmh
- * @date 2021/7/23 14:05
+ * @date 2021/7/25 16:39
  */
 
 import lombok.AllArgsConstructor;
@@ -13,26 +13,22 @@ import lombok.NoArgsConstructor;
 import java.sql.Date;
 
 /**
- *@ClassName User
+ *@ClassName UserInfoResp
  *@Description TODO
  *@Author ASUS
- *@Date 2021/7/23 14:05
+ *@Date 2021/7/25 16:39
  *@Version 1.0
  */
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class User {
-    private String userId;
-    private String name;
+public class UserInfoResp {
+    private String userName;
     private String signature;
     private String realName;
     private String headPortrait;
-    private String idCard;
     private String studentId;
-    private Integer status;
-    private Integer credibility;
-    private Date create_time;
-    private Date Logout_time;
+    private String status;
+    private String credibility;
 }

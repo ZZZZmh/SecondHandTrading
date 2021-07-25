@@ -6,7 +6,7 @@ CREATE TABLE account(
     password VARCHAR(32) NOT NULL   COMMENT '密码' ,
     user_id VARCHAR(32) NOT NULL   COMMENT '用户id' ,
     email VARCHAR(32) NOT NULL   COMMENT '邮箱' ,
-    telephone VARCHAR(32) NOT NULL   COMMENT '联系电话' ,
+    telephone VARCHAR(32)   COMMENT '联系电话' ,
     authority tinyint NOT NULL  DEFAULT 1 COMMENT '用户权限 1-游客，2-用户，3-管理员',
     PRIMARY KEY (account)
 ) COMMENT = '账号密码表 ';
@@ -14,17 +14,17 @@ CREATE TABLE account(
 ```
 
 ```sql
-CREATE TABLE user(
+CREATE TABLE userinfo(
     user_id VARCHAR(32) NOT NULL   COMMENT '用户id' ,
-    name VARCHAR(32) NOT NULL   COMMENT '虚拟名' ,
+    user_name VARCHAR(32) NOT NULL   COMMENT '虚拟名' ,
     signature VARCHAR(1024)   DEFAULT '这个人很懒，什么都没有留下' COMMENT '个性签名' ,
     real_name VARCHAR(32)   DEFAULT '未认证' COMMENT '真实姓名' ,
-    head_portrait VARCHAR(32)   DEFAULT '未认证' COMMENT '头像' ,
+    head_portrait VARCHAR(32)   DEFAULT '默认头像' COMMENT '头像' ,
     id_card VARCHAR(32)   DEFAULT '未认证' COMMENT '身份证' ,
-    student_id VARCHAR(32) NOT NULL   COMMENT '学号' ,
+    student_id VARCHAR(32) NOT NULL  DEFAULT '未认证'  COMMENT '学号' ,
     status TINYINT NOT NULL  DEFAULT 1 COMMENT '用户状态 1-正常，2-封禁，3-已注销' ,
     credibility TINYINT NOT NULL  DEFAULT 100 COMMENT '信誉' ,
-    create_time DATETIME NOT NULL   COMMENT '注册时间' ,
+    create_time timestamp default CURRENT_TIMESTAMP not null comment '创建时间',
     Logout_time DATETIME    COMMENT '注销时间' ,
     PRIMARY KEY (user_id)
 ) COMMENT = '用户信息表 ';
@@ -45,6 +45,7 @@ CREATE TABLE commodity(
     contact VARCHAR(32) NOT NULL   COMMENT '联系方式 微信or电话' ,
     status TINYINT unsigned NOT NULL   DEFAULT 1 COMMENT '状态 1-待审核，2-审核通过，3-审核不合格' ,
     version TINYINT NOT NULL DEFAULT 0 COMMENT '悲观锁' ,
+    create_time timestamp default CURRENT_TIMESTAMP not null comment '创建时间',
     PRIMARY KEY (commodity_id)
 ) COMMENT = '商品表 ';
 
@@ -59,7 +60,7 @@ CREATE TABLE order_form(
     number INT unsigned NOT NULL  DEFAULT 1 COMMENT '商品数量 不能为负数' ,
     address VARCHAR(128) NOT NULL   COMMENT '收货地址' ,
     status TINYINT unsigned NOT NULL  DEFAULT 0 COMMENT '状态 0-待付款，1-未发货，2-已发货，3已签收，4-申请退款，5-退款成功，6-客服介入，7-订单关闭' ,
-    create_time DATETIME NOT NULL   COMMENT '创建时间' ,
+    create_time timestamp default CURRENT_TIMESTAMP not null comment '创建时间',
     end_time DATETIME    COMMENT '结束时间' ,
     PRIMARY KEY (order_id)
 ) COMMENT = '订单表 ';
@@ -73,9 +74,9 @@ CREATE TABLE comment(
     commodity_id VARCHAR(32) NOT NULL   COMMENT '商品id' ,
     comment VARCHAR(1024) NOT NULL   COMMENT '评价内容' ,
     imgae VARCHAR(32)    COMMENT '评价图片' ,
-    untitled4 INT unsigned NOT NULL DEFAULT 0 COMMENT '喜欢人数' ,
-    untitled7 INT unsigned NOT NULL DEFAULT 0 COMMENT '不喜欢人数' ,
-    untitled5 DATETIME NOT NULL   COMMENT '创建时间' ,
+    ulike INT unsigned NOT NULL DEFAULT 0 COMMENT '喜欢人数' ,
+    unlike INT unsigned NOT NULL DEFAULT 0 COMMENT '不喜欢人数' ,
+    create_time timestamp default CURRENT_TIMESTAMP not null comment '创建时间',
     PRIMARY KEY (comment_id,order_id)
 ) COMMENT = '评论表 ';
 
@@ -96,7 +97,7 @@ CREATE TABLE shopping_cart(
 CREATE TABLE address(
     user_id VARCHAR(32) NOT NULL   COMMENT '用户id' ,
     address VARCHAR(32) NOT NULL   COMMENT '常用地址' ,
-    create_time DATETIME NOT NULL   COMMENT '创建时间' ,
+    create_time timestamp default CURRENT_TIMESTAMP not null comment '创建时间',
     PRIMARY KEY (user_id,address)
 ) COMMENT = '常用地址 ';
 
@@ -107,7 +108,7 @@ CREATE TABLE Banned_list(
     black_id VARCHAR(32)    COMMENT 'id' ,
     user_id VARCHAR(32)    COMMENT '用户id' ,
     id_card VARCHAR(32)    COMMENT '身份证' ,
-    create_time DATETIME    COMMENT '创建时间' 
+    create_time timestamp default CURRENT_TIMESTAMP not null comment '创建时间',
 ) COMMENT = '系统封禁用户 ';
 
 ```

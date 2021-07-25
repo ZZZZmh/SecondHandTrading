@@ -6,7 +6,12 @@ package com.zmh.secondHandTrading.controller;/**
  * @date 2021/7/23 15:23
  */
 
+import com.zmh.secondHandTrading.entity.model.AccountLoginModel;
+import com.zmh.secondHandTrading.entity.model.RegisterModel;
 import com.zmh.secondHandTrading.myException.EmailException;
+import com.zmh.secondHandTrading.service.LoginService;
+import com.zmh.secondHandTrading.service.RegisterService;
+import com.zmh.secondHandTrading.service.impl.LoginServiceImpl;
 import com.zmh.secondHandTrading.util.CommonResult;
 import com.zmh.secondHandTrading.util.EmailTool;
 import com.zmh.secondHandTrading.myEnum.ResultCode;
@@ -16,10 +21,7 @@ import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
@@ -37,11 +39,21 @@ import javax.validation.constraints.NotNull;
 public class LoginController {
     @Autowired
     private EmailTool emailTool;
+    @Autowired
+    private RegisterService registerService;
+    @Autowired
+    private LoginService loginService;
 
     // 注册
     @PostMapping("/public/register")
-    public String register(){
-        return null;
+    public CommonResult CommonResult(@RequestBody RegisterModel registerModel){
+        if(registerService.register(registerModel)== -1){
+            return CommonResult.failed(ResultCode.FAILED,"邮箱已绑定");
+        }
+        else if(registerService.register(registerModel)== 1){
+            return CommonResult.success("注册成功");
+        }
+        return CommonResult.failed(ResultCode.FAILED,"注册失败");
     }
 
 
@@ -53,11 +65,11 @@ public class LoginController {
 
     // 账号密码登入
     @PostMapping("/public/tologin")
-    public CommonResult tologin(@NotNull @RequestParam String username, @NotNull @RequestParam String password){
+    public CommonResult tologin(@RequestBody AccountLoginModel accountLoginModel){
         //获取当前输入的用户
         Subject currentUser = SecurityUtils.getSubject();
         //封装用户的数据
-        UsernamePasswordToken token = new UsernamePasswordToken(username,password);
+        UsernamePasswordToken token = new UsernamePasswordToken(accountLoginModel.getAccount(),accountLoginModel.getPassword());
         //登录，没有异常就说明登录成功
         try {
             currentUser.login(token);
@@ -68,6 +80,27 @@ public class LoginController {
             return CommonResult.failed(ResultCode.FAILED,"密码错误");
         }
     }
+
+    //邮箱登入
+    @PostMapping("/public/emailLogin")
+    public CommonResult emailLogin(@NotNull @RequestParam @Email String emailAddress){
+        AccountLoginModel model = loginService.emailLogin(emailAddress);
+        //获取当前输入的用户
+        Subject currentUser = SecurityUtils.getSubject();
+        //封装用户的数据
+        System.out.println(model.getAccount());
+        UsernamePasswordToken token = new UsernamePasswordToken(model.getAccount(),model.getPassword());
+        //登录，没有异常就说明登录成功
+        try {
+            currentUser.login(token);
+            return CommonResult.success("登入成功");
+        } catch (UnknownAccountException e) {
+            return CommonResult.failed(ResultCode.USER_NOT_EXISTENT,"账号错误");
+        }catch (IncorrectCredentialsException e){
+            return CommonResult.failed(ResultCode.FAILED,"密码错误");
+        }
+    }
+
 
     // 发送邮件
     @PostMapping("/public/sendEmail")
@@ -82,7 +115,7 @@ public class LoginController {
 
 
     // 邮箱验证
-    @GetMapping("/public/verifyEmail")
+    @PostMapping("/public/verifyEmail")
     public CommonResult verifyEmail(HttpSession session,@NotNull @RequestParam String code){
         String encode = (String) session.getAttribute("emailCode");
         if(code.equals(encode)){
@@ -94,7 +127,7 @@ public class LoginController {
     // 错误页面
     @GetMapping("/public/noauth")
     public CommonResult noauth(){
-        return CommonResult.failed(ResultCode.UNAUTHORIZED,"未经授权");
+        return CommonResult.failed(ResultCode.UNAUTHORIZED,"权限不足");
     }
 
     // 注销退出

@@ -42,10 +42,10 @@ public class ShiroConfig {
         // 如果没有指定权限，则拦截
         // 公共模块
         filterMap.put("/piblic/**","anon");
-        // 游客模块
-        filterMap.put("/user/tourist/**","perms[user:Tourist]");
-        // 用户模块(实名认证)
-        filterMap.put("/user/certification/**","perms[user:Certification]");
+        //游客模块
+        filterMap.put("/user/Tourist/**","perms[user:Tourist]");
+        //用户商品模块（实名认证）
+        filterMap.put("/user/commodity/**","perms[user:Tourist,user:Certification]");
         //管理员模块
         filterMap.put("/administrator/**","perms[user:Administrator]");
 

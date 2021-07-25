@@ -9,4 +9,12 @@
         where account = #{account}
         limit 1;
 	</select>
+
+
+    <select id="emaillogin" parameterType="string" resultType="com.zmh.secondHandTrading.entity.model.AccountLoginModel">
+        select account,password
+        from account
+        where email = #{email}
+        limit 1;
+    </select>
 </mapper>

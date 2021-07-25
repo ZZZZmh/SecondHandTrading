@@ -6,10 +6,12 @@ package com.zmh.secondHandTrading.service.impl;/**
  * @date 2021/7/23 14:46
  */
 
+import com.zmh.secondHandTrading.entity.model.AccountLoginModel;
 import com.zmh.secondHandTrading.entity.pojo.Account;
 import com.zmh.secondHandTrading.mapper.LoginMapper;
 import com.zmh.secondHandTrading.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *@ClassName LoginServiceImpl
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *@Date 2021/7/23 14:46
  *@Version 1.0
  */
+@Service
 public class LoginServiceImpl implements LoginService {
 
     @Autowired
@@ -26,5 +29,10 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Account login(String account) {
         return loginMapper.selectAccount(account);
+    }
+
+    @Override
+    public AccountLoginModel emailLogin(String email) {
+        return loginMapper.emaillogin(email);
     }
 }

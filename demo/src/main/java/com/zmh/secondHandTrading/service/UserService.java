@@ -1,6 +1,6 @@
 package com.zmh.secondHandTrading.service;
 
-import com.zmh.secondHandTrading.entity.pojo.User;
+import com.zmh.secondHandTrading.entity.pojo.Userinfo;
 
 /**
  * @author zmh
@@ -12,5 +12,5 @@ import com.zmh.secondHandTrading.entity.pojo.User;
 public interface UserService {
 
     // 查看用户所有信息
-    public User userInformation(String userId);
+    public Userinfo userInformation(String userId);
 }

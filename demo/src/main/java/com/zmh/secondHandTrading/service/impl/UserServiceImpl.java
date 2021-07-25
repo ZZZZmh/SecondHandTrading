@@ -6,10 +6,11 @@ package com.zmh.secondHandTrading.service.impl;/**
  * @date 2021/7/23 14:33
  */
 
-import com.zmh.secondHandTrading.entity.pojo.User;
+import com.zmh.secondHandTrading.entity.pojo.Userinfo;
 import com.zmh.secondHandTrading.mapper.UserMapper;
 import com.zmh.secondHandTrading.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *@ClassName UserServiceImpl
@@ -18,12 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
  *@Date 2021/7/23 14:33
  *@Version 1.0
  */
+@Service
 public class UserServiceImpl  implements UserService {
     @Autowired
     UserMapper userMapper;
     @Override
-    public User userInformation(String userId) {
-        User user = userMapper.selectAllInformation(userId);
+    public Userinfo userInformation(String userId) {
+        Userinfo user = userMapper.selectAllInformation(userId);
         return user;
     }
 }
