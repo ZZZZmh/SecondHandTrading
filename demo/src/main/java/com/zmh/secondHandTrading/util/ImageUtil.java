@@ -37,7 +37,7 @@ public class ImageUtil {
         UploadManager uploadManager = new UploadManager(cfg);
 
         String accessKey = "h0-z4g_5rx2d0yoRZ7itl8LduRW5nAmaByzxrbyE";      //AccessKey的值
-        String secretKey = "CJQ4M9OKifIEzhpa1NIEuOMsjcOdvJveo_iHXtCv";      //SecretKey的值
+        String secretKey = "****************************************";      //SecretKey的值
         String bucket = "zmh-s-h-t";                                        //存储空间名
 
         //在七牛云中图片的命名:UUID格式生成图片名
