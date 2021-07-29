@@ -8,10 +8,8 @@ package com.zmh.secondHandTrading.controller;/**
 
 import com.zmh.secondHandTrading.entity.model.AccountLoginModel;
 import com.zmh.secondHandTrading.entity.model.RegisterModel;
-import com.zmh.secondHandTrading.myException.EmailException;
 import com.zmh.secondHandTrading.service.LoginService;
 import com.zmh.secondHandTrading.service.RegisterService;
-import com.zmh.secondHandTrading.service.impl.LoginServiceImpl;
 import com.zmh.secondHandTrading.util.CommonResult;
 import com.zmh.secondHandTrading.util.EmailTool;
 import com.zmh.secondHandTrading.myEnum.ResultCode;
@@ -49,6 +47,9 @@ public class LoginController {
     public CommonResult CommonResult(@RequestBody RegisterModel registerModel){
         if(registerService.register(registerModel)== -1){
             return CommonResult.failed(ResultCode.FAILED,"邮箱已绑定");
+        }
+        if(registerService.register(registerModel)== -2){
+            return CommonResult.failed(ResultCode.FAILED,"账号已存在");
         }
         else if(registerService.register(registerModel)== 1){
             return CommonResult.success("注册成功");
@@ -135,7 +136,7 @@ public class LoginController {
     public CommonResult logout(){
         Subject currentUser = SecurityUtils.getSubject();
         currentUser.logout();
-        return CommonResult.success("退出登入成功");
+        return CommonResult.success("退出登入");
     }
 
 

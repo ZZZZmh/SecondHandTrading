@@ -7,10 +7,10 @@ CREATE TABLE account(
     user_id VARCHAR(32) NOT NULL   COMMENT '用户id' ,
     email VARCHAR(32) NOT NULL   COMMENT '邮箱' ,
     telephone VARCHAR(32)   COMMENT '联系电话' ,
-    authority tinyint NOT NULL  DEFAULT 1 COMMENT '用户权限 1-游客，2-用户，3-管理员',
+    status TINYINT NOT NULL  DEFAULT 1 COMMENT '用户状态 1-正常，2-封禁，3-已注销' ,
+    power tinyint NOT NULL  DEFAULT 1 COMMENT '用户权限 1-游客，2-用户，3-管理员',
     PRIMARY KEY (account)
 ) COMMENT = '账号密码表 ';
-
 ```
 
 ```sql
@@ -22,7 +22,6 @@ CREATE TABLE userinfo(
     head_portrait VARCHAR(32)   DEFAULT '默认头像' COMMENT '头像' ,
     id_card VARCHAR(32)   DEFAULT '未认证' COMMENT '身份证' ,
     student_id VARCHAR(32) NOT NULL  DEFAULT '未认证'  COMMENT '学号' ,
-    status TINYINT NOT NULL  DEFAULT 1 COMMENT '用户状态 1-正常，2-封禁，3-已注销' ,
     credibility TINYINT NOT NULL  DEFAULT 100 COMMENT '信誉' ,
     create_time timestamp default CURRENT_TIMESTAMP not null comment '创建时间',
     Logout_time DATETIME    COMMENT '注销时间' ,

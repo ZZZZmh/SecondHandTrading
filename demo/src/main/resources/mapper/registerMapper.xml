@@ -15,4 +15,8 @@
     <select id="translationEmail"  parameterType="String" resultType="int">
         select count(email) from account where email = #{email}
     </select>
+
+    <select id="translationAccount"  parameterType="String" resultType="int">
+        select count(account) from account where account = #{account}
+    </select>
 </mapper>

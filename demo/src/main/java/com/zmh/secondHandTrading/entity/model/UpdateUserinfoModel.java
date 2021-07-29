@@ -1,9 +1,9 @@
 package com.zmh.secondHandTrading.entity.model;/**
- * @title: RegisterRequest
+ * @title: UpateUserinfoModel
  * @projectName demo
  * @description: TODO
  * @author zmh
- * @date 2021/7/25 13:21
+ * @date 2021/7/26 14:20
  */
 
 import lombok.AllArgsConstructor;
@@ -11,28 +11,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 /**
- *@ClassName RegisterRequest
+ *@ClassName UpateUserinfoModel
  *@Description TODO
  *@Author ASUS
- *@Date 2021/7/25 13:21
+ *@Date 2021/7/26 14:20
  *@Version 1.0
  */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class RegisterModel {
-    @NotNull
-    @Length(max = 16, min = 4,message = "账号长度限制4~16字符")
-    private String account;
-    @Length(max = 16, min = 4,message = "密码长度限制4~16字符")
-    private String password;
-    @NotNull
+public class UpdateUserinfoModel {
+    @NotNull(message = "姓名不能为空")
     @Length(max = 6, min = 2,message = "姓名长度限制2~6字符")
-    private String user_name;
-    @Email
-    private String email;
+    private String userName;
+    @Length(max = 15,message = "个性签名长度限制15字符")
+    private String signature;
 }

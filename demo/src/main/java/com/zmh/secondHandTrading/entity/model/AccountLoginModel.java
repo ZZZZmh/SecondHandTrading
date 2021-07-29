@@ -9,6 +9,9 @@ package com.zmh.secondHandTrading.entity.model;/**
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotNull;
 
 /**
  *@ClassName AccountLoginModel
@@ -21,6 +24,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class AccountLoginModel {
+    @Length(max = 16, min = 4,message = "账号长度限制4~16字符")
     private String account;
+    @Length(max = 16, min = 4,message = "密码长度限制4~16字符")
     private String password;
 }

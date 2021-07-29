@@ -10,6 +10,8 @@ import com.zmh.secondHandTrading.entity.pojo.Userinfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.Map;
+
 /**
  *@ClassName UserMapper
  *@Description TODO
@@ -21,4 +23,12 @@ import org.springframework.stereotype.Repository;
 @Mapper
 public interface UserMapper {
     public Userinfo selectAllInformation(String userId);
+    public int updateCertification(Map<String,Object> param);
+    public int updateUserInfo(Map<String,Object> param);
+    public int updatePassword(Map<String,Object> param);
+    public int updateEmail(Map<String,Object> param);
+    public int updateHead(Map<String,Object> param);
+    public int updatePermissions(Map<String,Object> param);
+    public String serachIdcard(String idcard);
+    public int logout(String id);
 }

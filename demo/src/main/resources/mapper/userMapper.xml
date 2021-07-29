@@ -9,4 +9,54 @@
         where user_Id = #{userId}
         limit 1;
 	</select>
+
+    <select id="serachIdcard" parameterType="string"  resultType="String" >
+        select id_card
+        from userinfo
+        where id_card = #{idcard}
+        limit 1;
+    </select>
+
+    <update id="updateCertification" parameterType="map">
+        update userinfo
+        set real_name= #{real_name},id_card= #{id_card},student_id= #{student_id}
+        where user_id= #{id}
+    </update>
+
+
+    <update id="updatePassword" parameterType="map">
+        update account
+        set password= #{password}
+        where user_id= #{id}
+    </update>
+
+    <update id="updateEmail" parameterType="map">
+        update account
+        set email= #{email}
+        where user_id= #{id}
+    </update>
+
+    <update id="updateUserInfo" parameterType="map">
+        update userinfo
+        set user_name= #{user_name},signature=#{signature}
+        where user_id= #{id}
+    </update>
+
+    <update id="updateHead" parameterType="map">
+        update userinfo
+        set head_portrait= #{head_portrait}
+        where user_id= #{id}
+    </update>
+
+    <update id="logout" parameterType="String">
+        update account
+        set status= 3
+        where user_id= #{id}
+    </update>
+
+    <update id="updatePermissions" parameterType="map">
+        update account
+        set power= #{power}
+        where user_id= #{id}
+    </update>
 </mapper>

@@ -29,6 +29,5 @@ public class UserInfoResp {
     private String realName;
     private String headPortrait;
     private String studentId;
-    private String status;
     private String credibility;
 }

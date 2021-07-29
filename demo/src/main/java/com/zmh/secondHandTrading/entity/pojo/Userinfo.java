@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.sql.Date;
 
 /**
@@ -31,7 +32,6 @@ public class Userinfo {
     private String headPortrait;
     private String idCard;
     private String studentId;
-    private Integer status;
     private Integer credibility;
     private Date create_time;
     private Date Logout_time;

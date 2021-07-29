@@ -33,8 +33,13 @@ public class RegisterServiceImpl implements RegisterService {
 
     @Override
     public int register(RegisterModel registerModel) {
+        // 判断邮箱是否绑定
         if(registerMapper.translationEmail(registerModel.getEmail())>=1){
             return -1;
+        }
+        // 判断账号是否存在
+        if(registerMapper.translationAccount(registerModel.getAccount())>=2){
+            return -2;
         }
         Snowflake snowflake = IdUtil.createSnowflake(1, 1);
         long id = snowflake.nextId();
@@ -47,7 +52,9 @@ public class RegisterServiceImpl implements RegisterService {
         Map<String,Object> mapUserinfo = new HashMap<>();
         mapUserinfo.put("user_id",user_id);
         mapUserinfo.put("user_name",registerModel.getUser_name());
+        // 注册账号
         int result = registerMapper.registerAccount(mapAccount);
+        // 注册用户
         int result2 = registerMapper.registerUser(mapUserinfo);
         if(result == 1 && result2 == 1){
             return 1;
