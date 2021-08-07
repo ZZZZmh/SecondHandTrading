@@ -23,12 +23,7 @@ import java.util.Map;
 @Mapper
 public interface UserMapper {
     public Userinfo selectAllInformation(String userId);
-    public int updateCertification(Map<String,Object> param);
-    public int updateUserInfo(Map<String,Object> param);
-    public int updatePassword(Map<String,Object> param);
-    public int updateEmail(Map<String,Object> param);
-    public int updateHead(Map<String,Object> param);
-    public int updatePermissions(Map<String,Object> param);
     public String serachIdcard(String idcard);
-    public int logout(String id);
+    public int updateAccount(Map<String,Object> param);
+    public int updateUserinfo(Map<String,Object> param);
 }

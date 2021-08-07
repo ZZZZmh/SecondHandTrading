@@ -18,7 +18,6 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
 
 /**
  *@ClassName UserRealm
@@ -76,7 +75,7 @@ public class UserRealm  extends AuthorizingRealm {
         }
         // 密码验证
         // shiro 安全框架负责验证  MD5密码加密  MD5言文加密
-        // 第一个参数为返回当前用户（此处返回查询到的User给doGetAuthorizationInfo授权）,放入subject中
+        // 第一个参数为返回当前用户（此处返回查询到的Account给doGetAuthorizationInfo授权）,放入subject中
         return new SimpleAuthenticationInfo(account,account.getPassword(),"");
     }
 }

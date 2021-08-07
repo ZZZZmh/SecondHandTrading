@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zmh.secondHandTrading.mapper.CommodityMapper">
+	<insert id="addCommodity" parameterType="map">
+		insert into commodity
+		(commodity_id,user_id,commodity_name,price,commodity_number,Introduction,address,Label,contact)
+		values
+		(#{commodity_id},#{user_id},#{commodity_name},#{price},#{commodity_number},#{Introduction},#{address},#{Label},#{contact})
+	</insert>
+
+
+
+	<select id="selectCommodity" parameterType="map" resultType="com.zmh.secondHandTrading.entity.pojo.Commodity">
+		select * from commodity
+		<where>
+			<if test="userId!=null and userId!=''">
+				and user_id = #{userId}
+			</if>
+			<if test="commodityName!=null and commodityName!=''">
+				and commodity_name like CONCAT('%',#{commodityName},'%')
+			</if>
+			<if test="lable!=null and lable!=''">
+				and Label like CONCAT('%',#{lable},'%')
+			</if>
+			<if test="status!=null and status!=''">
+				and status = #{status}
+			</if>
+		</where>
+		<if test="order!=null and order!=''">
+			ORDER BY ${clause} ${order}
+		</if>
+		for update
+	</select>
+
+
+	<update id="updateCommodity" parameterType="map">
+		UPDATE commodity
+		<trim prefix="set" suffixOverrides=",">
+			<if test="url!=null and url!=''">image = #{url},</if>
+			<if test="status!=null and status!=''">status = #{status},</if>
+			<if test="commodityName!=null and commodityName!=''">commodity_name = #{commodityName},</if>
+			<if test="price!=null and price!=''">price = #{price},</if>
+			<if test="commodityNumber!=null and commodityNumber!=''">commodity_number = #{commodityNumber},</if>
+			<if test="Introduction!=null and Introduction!=''">Introduction = #{Introduction},</if>
+			<if test="address!=null and address!=''">address = #{address},</if>
+			<if test="Label!=null and Label!=''">Label = #{label},</if>
+			<if test="contact!=null and contact!=''">contact = #{contact},</if>
+		</trim>
+		WHERE commodity_id = #{commodityId}
+	</update>
+</mapper>

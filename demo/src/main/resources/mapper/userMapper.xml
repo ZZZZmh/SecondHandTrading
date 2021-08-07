@@ -17,46 +17,29 @@
         limit 1;
     </select>
 
-    <update id="updateCertification" parameterType="map">
-        update userinfo
-        set real_name= #{real_name},id_card= #{id_card},student_id= #{student_id}
-        where user_id= #{id}
+
+    <update id="updateUserinfo" parameterType="map">
+        UPDATE userinfo
+        <set>
+            <if test="real_name!=null and real_name!=''">real_name= #{real_name},</if>
+            <if test="id_card!=null and id_card!=''">id_card= #{id_card},</if>
+            <if test="student_id!=null and student_id!=''">sstudent_id= #{student_id},</if>
+            <if test="user_name!=null and user_name!=''">user_name= #{user_name},</if>
+            <if test="signature!=null and signature!=''">signature=#{signature},</if>
+            <if test="head_portrait!=null and head_portrait!=''">head_portrait= #{head_portrait},</if>
+        </set>
+        WHERE user_id=#{id}
     </update>
 
-
-    <update id="updatePassword" parameterType="map">
-        update account
-        set password= #{password}
-        where user_id= #{id}
+    <update id="updateAccount" parameterType="map">
+        UPDATE account
+        <set>
+            <if test="password!=null and password!=''">password= #{password},</if>
+            <if test="email!=null and email!=''">email= #{email},</if>
+            <if test="status!=null and status!=''">status= #{status},</if>
+            <if test="power!=null and power!=''">power= #{power},</if>
+        </set>
+        WHERE user_id=#{id}
     </update>
 
-    <update id="updateEmail" parameterType="map">
-        update account
-        set email= #{email}
-        where user_id= #{id}
-    </update>
-
-    <update id="updateUserInfo" parameterType="map">
-        update userinfo
-        set user_name= #{user_name},signature=#{signature}
-        where user_id= #{id}
-    </update>
-
-    <update id="updateHead" parameterType="map">
-        update userinfo
-        set head_portrait= #{head_portrait}
-        where user_id= #{id}
-    </update>
-
-    <update id="logout" parameterType="String">
-        update account
-        set status= 3
-        where user_id= #{id}
-    </update>
-
-    <update id="updatePermissions" parameterType="map">
-        update account
-        set power= #{power}
-        where user_id= #{id}
-    </update>
 </mapper>

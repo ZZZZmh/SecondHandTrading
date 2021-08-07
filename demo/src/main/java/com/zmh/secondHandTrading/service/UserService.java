@@ -1,8 +1,13 @@
 package com.zmh.secondHandTrading.service;
 
 import com.zmh.secondHandTrading.entity.model.CertificationModel;
+import com.zmh.secondHandTrading.entity.model.CommodityAddModel;
+import com.zmh.secondHandTrading.entity.model.UpdateCommodityModel;
 import com.zmh.secondHandTrading.entity.model.UpdateUserinfoModel;
+import com.zmh.secondHandTrading.entity.pojo.Commodity;
 import com.zmh.secondHandTrading.entity.pojo.Userinfo;
+import com.zmh.secondHandTrading.util.CommonPage;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author zmh
@@ -33,4 +38,16 @@ public interface UserService {
 
     // 注销用户
     public int logout();
+
+    // 上架商品
+    public int addCommodity(CommodityAddModel model);
+
+    // 上传商品图片
+    public int updateCommodityImg(MultipartFile file,String commodityId);
+
+    // 查询自己上架的商品
+    public CommonPage<Commodity> selectOwnCommodity(int pageNo, int pageSize);
+
+    // 更新自己上架的商品
+    public int updateOwnCommodity(UpdateCommodityModel model);
 }

@@ -55,7 +55,7 @@ public class DruidDataSourceConfig {
     public FilterRegistrationBean webStatFilter(){
         FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new WebStatFilter());
-        //可以过滤那些请求呢？
+        //设置过滤请求
         Map<String,String> initParameters = new HashMap<>();
         //这些东西不进行统计
         initParameters.put("exclusions","*.js,*.css,/druid/*");

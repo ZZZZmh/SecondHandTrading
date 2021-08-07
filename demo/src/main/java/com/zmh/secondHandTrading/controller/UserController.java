@@ -7,6 +7,8 @@ package com.zmh.secondHandTrading.controller;/**
  */
 
 import com.zmh.secondHandTrading.entity.model.CertificationModel;
+import com.zmh.secondHandTrading.entity.model.CommodityAddModel;
+import com.zmh.secondHandTrading.entity.model.UpdateCommodityModel;
 import com.zmh.secondHandTrading.entity.model.UpdateUserinfoModel;
 import com.zmh.secondHandTrading.entity.pojo.Account;
 import com.zmh.secondHandTrading.entity.pojo.Userinfo;
@@ -18,14 +20,13 @@ import com.zmh.secondHandTrading.util.ImageUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.net.HttpCookie;
 
 /**
  *@ClassName UserController
@@ -34,7 +35,7 @@ import javax.validation.constraints.NotNull;
  *@Date 2021/7/25 15:52
  *@Version 1.0
  */
-@RestController("")
+@RestController
 public class UserController {
 
     @Autowired
@@ -42,7 +43,7 @@ public class UserController {
 
     // 用户信息
     @PostMapping("/user/Tourist/userInfo")
-    public CommonResult serachInfo(){
+    public CommonResult serachInfo(HttpSession session){
         Subject subject = SecurityUtils.getSubject();
         Account account= (Account) subject.getPrincipal();
         Userinfo userinfo = userService.userInformation(account.getUserId());
@@ -53,7 +54,10 @@ public class UserController {
         userInfoResp.setRealName(userinfo.getRealName());
         userInfoResp.setHeadPortrait(userinfo.getHeadPortrait());
         userInfoResp.setStudentId(userinfo.getStudentId());
-        userInfoResp.setCredibility("当前信誉指"+userinfo.getCredibility());
+        userInfoResp.setCredibility("当前信誉指:"+userinfo.getCredibility());
+        // 放入session
+        session.setAttribute("user",userInfoResp);
+        session.setAttribute("credibility",userinfo.getCredibility());
         return CommonResult.success(userInfoResp);
     }
 
@@ -97,7 +101,7 @@ public class UserController {
             return CommonResult.failed(ResultCode.FAILED,"该身份证已绑定其他账号");
         }
         else if(userService.certification(model) == 1){
-            return CommonResult.success("绑定成功");
+            return CommonResult.success("模拟调用实名认证接口=》绑定成功");
         }
         return CommonResult.failed(ResultCode.FAILED,"绑定失败");
     }
@@ -124,7 +128,7 @@ public class UserController {
     }
 
 
-    // 购买商品
+    // 购买商品(redis)
 
     // 查看购物车
 
@@ -138,19 +142,56 @@ public class UserController {
 
     // 申请退款
 
-    // 评论
-
     // 查看订单(用户，商家)
 
+    // 取消订单
+
     // 上架商品
+    @PostMapping("/user/commodity/add")
+    public CommonResult addcommodity(HttpSession session,@RequestBody CommodityAddModel model){
+        int credibility = (int) session.getAttribute("credibility");
+        if (credibility<80){
+            return CommonResult.failed(ResultCode.FORBIDDEN,"信誉指过低，不允许上架");
+        }
+        if(userService.addCommodity(model) == 1){
+            return CommonResult.success("商品添加成功");
+        }
+        return CommonResult.failed(ResultCode.FAILED,"商品添加失败");
+    }
+
+    // 上传商品图片
+    @PostMapping("/user/commodity/updateCommodityImg")
+    public CommonResult updateCommodityImg(MultipartFile file,String commodityId){
+        if(userService.updateCommodityImg(file,commodityId)==1){
+            return CommonResult.success("商品添加成功");
+        }
+        return CommonResult.failed(ResultCode.FAILED,"商品添加失败");
+    }
+
+    // 查看用户上架商品
+    @GetMapping("/user/commodity/selectOwn")
+    public CommonResult selectOwnCommodity(@RequestParam @NotNull int pageNo, @RequestParam @NotNull int pageSize){
+        return CommonResult.success(userService.selectOwnCommodity(pageNo, pageSize));
+    }
+
+
 
     // 更新商品信息
+    @PostMapping("/user/commodity/updateOwnCommodity")
+    public CommonResult updateOwnCommodity(@RequestBody UpdateCommodityModel model){
+        if(userService.updateOwnCommodity(model)==1){
+            return CommonResult.success("修改成功");
+        }
+        return CommonResult.failed(ResultCode.FAILED,"修改失败");
+    }
 
     // 退款处理
 
     // 更新订单
 
     // 查看代发货订单
+
+    // 评论
 
     // 评论点赞（点踩）
 
