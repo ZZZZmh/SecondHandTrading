@@ -88,8 +88,6 @@ public class LoginController {
         AccountLoginModel model = loginService.emailLogin(emailAddress);
         //获取当前输入的用户
         Subject currentUser = SecurityUtils.getSubject();
-        //封装用户的数据
-        System.out.println(model.getAccount());
         UsernamePasswordToken token = new UsernamePasswordToken(model.getAccount(),model.getPassword());
         //登录，没有异常就说明登录成功
         try {

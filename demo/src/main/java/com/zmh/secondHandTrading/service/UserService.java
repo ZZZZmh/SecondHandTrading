@@ -1,13 +1,12 @@
 package com.zmh.secondHandTrading.service;
 
-import com.zmh.secondHandTrading.entity.model.CertificationModel;
-import com.zmh.secondHandTrading.entity.model.CommodityAddModel;
-import com.zmh.secondHandTrading.entity.model.UpdateCommodityModel;
-import com.zmh.secondHandTrading.entity.model.UpdateUserinfoModel;
+import com.zmh.secondHandTrading.entity.model.*;
 import com.zmh.secondHandTrading.entity.pojo.Commodity;
 import com.zmh.secondHandTrading.entity.pojo.Userinfo;
 import com.zmh.secondHandTrading.util.CommonPage;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 /**
  * @author zmh
@@ -43,11 +42,18 @@ public interface UserService {
     public int addCommodity(CommodityAddModel model);
 
     // 上传商品图片
-    public int updateCommodityImg(MultipartFile file,String commodityId);
+    public int updateCommodityImg(MultipartFile file,String commodityId) throws Exception;
 
     // 查询自己上架的商品
-    public CommonPage<Commodity> selectOwnCommodity(int pageNo, int pageSize);
+    public CommonPage<Commodity> selectOwnCommodity(Integer pageNo, Integer pageSize);
 
     // 更新自己上架的商品
-    public int updateOwnCommodity(UpdateCommodityModel model);
+    public int updateOwnCommodity(UpdateCommodityModel model) throws Exception;
+
+    // 购买商品先进消息队列
+    public int enterQueue(String commodityId,int commodityNumber,int purchaseQuantity,String address);
+
+    // 购买商品
+    public int buyCommodity(String userid) throws Exception;
+
 }

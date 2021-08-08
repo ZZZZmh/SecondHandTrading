@@ -6,17 +6,16 @@ package com.zmh.secondHandTrading.controller;/**
  * @date 2021/7/25 15:52
  */
 
-import com.zmh.secondHandTrading.entity.model.CertificationModel;
-import com.zmh.secondHandTrading.entity.model.CommodityAddModel;
-import com.zmh.secondHandTrading.entity.model.UpdateCommodityModel;
-import com.zmh.secondHandTrading.entity.model.UpdateUserinfoModel;
+import com.zmh.secondHandTrading.entity.model.*;
 import com.zmh.secondHandTrading.entity.pojo.Account;
 import com.zmh.secondHandTrading.entity.pojo.Userinfo;
 import com.zmh.secondHandTrading.entity.resp.UserInfoResp;
 import com.zmh.secondHandTrading.myEnum.ResultCode;
+import com.zmh.secondHandTrading.service.impl.PublicServiceImpl;
 import com.zmh.secondHandTrading.service.impl.UserServiceImpl;
 import com.zmh.secondHandTrading.util.CommonResult;
 import com.zmh.secondHandTrading.util.ImageUtil;
+import com.zmh.secondHandTrading.util.RedisUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
-import java.net.HttpCookie;
 
 /**
  *@ClassName UserController
@@ -40,6 +38,10 @@ public class UserController {
 
     @Autowired
     UserServiceImpl userService;
+    @Autowired
+    PublicServiceImpl publicService;
+    @Autowired
+    RedisUtil redisUtil;
 
     // 用户信息
     @PostMapping("/user/Tourist/userInfo")
@@ -129,6 +131,43 @@ public class UserController {
 
 
     // 购买商品(redis)
+    @PostMapping("/user/commodity/buy")
+    public CommonResult buy(@RequestBody OrderFormModel model){
+        Subject subject = SecurityUtils.getSubject();
+        Account account= (Account) subject.getPrincipal();
+        System.out.println("正在下单");
+        // 入队
+        int result = userService.enterQueue(model.getCommodityId(), model.getCommodityNumber(),model.getPurchaseQuantity(),model.getAddress());
+        if(result == -1){
+            System.out.println("已有订单，请勿重复下单，正在帮您处理");
+        }
+        // 处理对应商品队列
+        System.out.println("正在处理");
+        publicService.handleQueue(model.getCommodityId());
+        // 查询结果，一秒查询一次，查询十秒
+        int outcome = 0;
+        for (int i = 0; i < 10; i++) {
+            outcome = (Integer) redisUtil.hget(account.getUserId(),"result");
+            if (outcome==1){
+                System.out.println("=======》扣除账户余额");
+                // 清除在redis中的订单(数据库已生成标准订单，已经可在数据库中查询)
+                redisUtil.hdel(account.getUserId(),"commodityId");
+                return CommonResult.success("购买成功");
+            }else if(outcome==-2){
+                return CommonResult.failed(ResultCode.FAILED,"购买失败，购买数量大与商品数量");
+            }else if(outcome==-3){
+                return CommonResult.failed(ResultCode.FAILED,"购买失败，商品已售尽");
+            }
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return CommonResult.failed(ResultCode.FAILED,"超时！购买失败，查询无结果。请稍后再试");
+    }
+
 
     // 查看购物车
 
@@ -170,7 +209,7 @@ public class UserController {
 
     // 查看用户上架商品
     @GetMapping("/user/commodity/selectOwn")
-    public CommonResult selectOwnCommodity(@RequestParam @NotNull int pageNo, @RequestParam @NotNull int pageSize){
+    public CommonResult selectOwnCommodity(@RequestParam @NotNull Integer pageNo, @RequestParam @NotNull Integer pageSize){
         return CommonResult.success(userService.selectOwnCommodity(pageNo, pageSize));
     }
 
@@ -179,8 +218,12 @@ public class UserController {
     // 更新商品信息
     @PostMapping("/user/commodity/updateOwnCommodity")
     public CommonResult updateOwnCommodity(@RequestBody UpdateCommodityModel model){
-        if(userService.updateOwnCommodity(model)==1){
-            return CommonResult.success("修改成功");
+        try {
+            if(userService.updateOwnCommodity(model)==1){
+                return CommonResult.success("修改成功");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return CommonResult.failed(ResultCode.FAILED,"修改失败");
     }

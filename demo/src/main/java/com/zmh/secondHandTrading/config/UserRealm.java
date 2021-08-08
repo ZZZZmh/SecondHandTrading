@@ -9,6 +9,7 @@ package com.zmh.secondHandTrading.config;/**
 
 import com.zmh.secondHandTrading.entity.pojo.Account;
 import com.zmh.secondHandTrading.mapper.LoginMapper;
+import com.zmh.secondHandTrading.service.impl.UserServiceImpl;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -17,6 +18,8 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpSession;
 
 
 /**
@@ -30,6 +33,8 @@ public class UserRealm  extends AuthorizingRealm {
 
     @Autowired
     LoginMapper loginMapper;
+    @Autowired
+    UserServiceImpl userService;
 
     // 授权
     @Override

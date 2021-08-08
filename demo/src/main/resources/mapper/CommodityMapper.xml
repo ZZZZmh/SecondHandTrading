@@ -31,6 +31,9 @@
 		<if test="order!=null and order!=''">
 			ORDER BY ${clause} ${order}
 		</if>
+		<if test="pageSize!=null and pageSize!=''">
+			limit ${pageStart},${pageSize}
+		</if>
 		for update
 	</select>
 

@@ -55,10 +55,9 @@ CREATE TABLE order_form(
     order_id  VARCHAR(32) NOT NULL   COMMENT '订单id' ,
     commodity_id  VARCHAR(32) NOT NULL   COMMENT '商品' ,
     buyer VARCHAR(32) NOT NULL   COMMENT '买家' ,
-    seller VARCHAR(32) NOT NULL   COMMENT '卖家' ,
-    number INT unsigned NOT NULL  DEFAULT 1 COMMENT '商品数量 不能为负数' ,
+    purchaseQuantity INT unsigned NOT NULL  DEFAULT 1 COMMENT '商品数量 不能为负数' ,
     address VARCHAR(128) NOT NULL   COMMENT '收货地址' ,
-    status TINYINT unsigned NOT NULL  DEFAULT 0 COMMENT '状态 0-待付款，1-未发货，2-已发货，3已签收，4-申请退款，5-退款成功，6-客服介入，7-订单关闭' ,
+    status TINYINT unsigned NOT NULL  DEFAULT 0 COMMENT '状态 0-待付款，1-已付款未发货，3-已发货，4-已签收，5-申请退款，6-退款成功，7-客服介入，8-订单关闭' ,
     create_time timestamp default CURRENT_TIMESTAMP not null comment '创建时间',
     end_time DATETIME    COMMENT '结束时间' ,
     PRIMARY KEY (order_id)

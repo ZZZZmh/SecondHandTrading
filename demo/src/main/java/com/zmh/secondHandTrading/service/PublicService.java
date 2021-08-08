@@ -17,10 +17,11 @@ import java.util.List;
 public interface PublicService {
 
     // 按名称模糊查找
-    public CommonPage<Commodity> serachCommodityByName(String commodityName,String order,String clause);
+    public CommonPage<Commodity> serachCommodityByName(String commodityName,String order,String clause,Integer pageStart,Integer pageSize);
 
     // 按标签模糊查找
-    public CommonPage<Commodity> serachCommodityByLabel(String lable,String order,String clause);
+    public CommonPage<Commodity> serachCommodityByLabel(String lable,String order,String clause,Integer pageStart, Integer pageSize);
 
-
+    // 处理redis消息队列
+    public void handleQueue(String commodityId);
 }

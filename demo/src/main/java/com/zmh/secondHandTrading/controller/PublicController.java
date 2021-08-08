@@ -40,15 +40,14 @@ public class PublicController {
 
     // 按名称查找商品(默认价格升序)
     @GetMapping("/public/select/commodity/byName")
-    public CommonResult serachCommodityByName(@RequestParam @NotNull String commodityName,String order,String clause){
-        return CommonResult.success(publicService.serachCommodityByName(commodityName, order,clause));
+    public CommonResult serachCommodityByName(@RequestParam @NotNull String commodityName,String order,String clause,Integer pageStart,Integer size){
+        return CommonResult.success(publicService.serachCommodityByName(commodityName, order,clause,pageStart,size));
     }
 
     // 按分类查找商品(默认价格升序)
     @GetMapping("/public/select/commodity/byLabel")
-    public CommonResult serachCommodityByLabel(@RequestParam @NotNull String label,String order,String clause){
-        return CommonResult.success(publicService.serachCommodityByLabel(label, order,clause));
+    public CommonResult serachCommodityByLabel(@RequestParam @NotNull String label,String order,String clause,Integer pageStart,Integer size){
+        return CommonResult.success(publicService.serachCommodityByLabel(label, order,clause,pageStart,size));
     }
-
 
 }
