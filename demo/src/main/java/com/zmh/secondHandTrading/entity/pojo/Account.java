@@ -30,5 +30,6 @@ public class Account {
     private String userId;
     private String email;
     private String telephone;
+    private int credibility;
     private int power;
 }

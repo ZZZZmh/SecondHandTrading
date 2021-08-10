@@ -50,10 +50,10 @@ public interface UserService {
     // 更新自己上架的商品
     public int updateOwnCommodity(UpdateCommodityModel model) throws Exception;
 
-    // 购买商品先进消息队列
-    public int enterQueue(String commodityId,int commodityNumber,int purchaseQuantity,String address);
+    // 购买商品进消息队列
+    public int enterQueue(String commodityId,int purchaseQuantity,String address);
 
-    // 购买商品
-    public int buyCommodity(String userid) throws Exception;
+    // 处理消息队列购买商品
+    public int buyCommodity(String userid,String orderId) throws Exception;
 
 }

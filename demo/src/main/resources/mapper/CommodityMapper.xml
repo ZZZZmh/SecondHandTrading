@@ -15,6 +15,9 @@
 	<select id="selectCommodity" parameterType="map" resultType="com.zmh.secondHandTrading.entity.pojo.Commodity">
 		select * from commodity
 		<where>
+			<if test="commodityId!=null and commodityId!=''">
+				and commodity_id = #{commodityId}
+			</if>
 			<if test="userId!=null and userId!=''">
 				and user_id = #{userId}
 			</if>

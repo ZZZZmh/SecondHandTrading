@@ -35,6 +35,8 @@ public class AdministratorController {
 
     // 管理用户
 
+    // 信誉管理
+
     // 查看所有商品
 
     // 管理商品

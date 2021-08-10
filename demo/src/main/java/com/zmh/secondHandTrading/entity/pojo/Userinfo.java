@@ -32,7 +32,6 @@ public class Userinfo {
     private String headPortrait;
     private String idCard;
     private String studentId;
-    private Integer credibility;
     private Date create_time;
     private Date Logout_time;
 }

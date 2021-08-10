@@ -1,9 +1,10 @@
 package com.zmh.secondHandTrading.mapper;
 
-import com.zmh.secondHandTrading.entity.model.OrderFormModel;
+import com.zmh.secondHandTrading.entity.pojo.OrderForm;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,5 +18,7 @@ import java.util.Map;
 @Repository("OrderFormMapper")
 @Mapper
 public interface OrderFormMapper {
+    public List<OrderForm> selectOrderForm(Map map);
     public int addOrderForm(Map map);
+    public int updateOrderForm(Map map);
 }

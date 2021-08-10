@@ -22,11 +22,12 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 @Data
 public class OrderFormModel {
+    private String orderId;
     private String commodityId;
+    // 卖家id
+    private String seller;
     // 购买商品量
     private int purchaseQuantity;
-    // 商品数量
-    private int commodityNumber;
     @Length(max = 40, min = 2,message = "地址长度限制2~40字符")
     private String address;
 }

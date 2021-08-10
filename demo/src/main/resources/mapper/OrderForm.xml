@@ -3,9 +3,45 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zmh.secondHandTrading.mapper.OrderFormMapper">
+
+    <select id="selectOrderForm" parameterType="map" resultType="com.zmh.secondHandTrading.entity.pojo.OrderForm">
+        select * from order_form
+        <where>
+            <if test="orderId!=null and orderId!=''">
+                and order_id = #{orderId}
+            </if>
+            <if test="buyerId!=null and buyerId!=''">
+                and buyer = #{buyerId}
+            </if>
+            <if test="sellerId!=null and sellerId!=''">
+                and seller = #{sellerId}
+            </if>
+            <if test="commodityId!=null and commodityId!=''">
+                and commodity_id = #{commodityId}
+            </if>
+        </where>
+        <if test="order!=null and order!=''">
+            ORDER BY ${clause} ${order}
+        </if>
+        <if test="pageSize!=null and pageSize!=''">
+            limit ${pageStart},${pageSize}
+        </if>
+        for update
+    </select>
+
     <insert id="addOrderForm" parameterType="map">
         insert into order_form(
-        order_id,commodity_id,buyer,purchaseQuantity,address,status,create_time)
-        values(#{orderId},#{commodityId},#{buyer},#{purchaseQuantity},#{address},#{status},#{createTime})
+        order_id,commodity_id,buyer,seller,purchaseQuantity,address,status,create_time)
+        values(#{orderId},#{commodityId},#{buyer},#{seller},#{purchaseQuantity},#{address},#{status},#{createTime})
 	</insert>
+
+    <update id="updateOrderForm" parameterType="map">
+        UPDATE order_form
+        <set>
+            <if test="address!=null and address!=''">address = #{address},</if>
+            <if test="status!=null and status!=''">status = #{status},</if>
+            <if test="endTime!=null and endTime!=''">end_time = #{endTime},</if>
+        </set>
+        WHERE order_id = #{orderId}
+    </update>
 </mapper>

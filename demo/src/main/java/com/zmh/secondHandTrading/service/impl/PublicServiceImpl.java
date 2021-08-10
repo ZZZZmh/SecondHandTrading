@@ -105,11 +105,12 @@ public class PublicServiceImpl implements PublicService {
 
     @Override
     @Async
-    public void handleQueue(String commodityId) {
+    public void handleQueue(String commodityId,String orderId) {
         RedisThread redisThread = new RedisThread();
-        redisThread.setCommodityId(commodityId);
         redisThread.setUserService(userService);
         redisThread.setRedisUtil(redisUtil);
+        redisThread.setCommodityId(commodityId);
+        redisThread.setOrderId(orderId);
         Thread thread = new Thread(redisThread);
         thread.start();
     }

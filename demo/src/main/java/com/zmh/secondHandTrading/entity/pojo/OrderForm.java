@@ -1,9 +1,9 @@
 package com.zmh.secondHandTrading.entity.pojo;/**
- * @title: Commodity
+ * @title: OrderForm
  * @projectName demo
  * @description: TODO
  * @author zmh
- * @date 2021/8/4 10:55
+ * @date 2021/8/10 11:07
  */
 
 import lombok.AllArgsConstructor;
@@ -13,26 +13,23 @@ import lombok.NoArgsConstructor;
 import java.sql.Date;
 
 /**
- *@ClassName Commodity
+ *@ClassName OrderForm
  *@Description TODO
  *@Author ASUS
- *@Date 2021/8/4 10:55
+ *@Date 2021/8/10 11:07
  *@Version 1.0
  */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Commodity {
+public class OrderForm {
+    private String orderId;
     private String commodityId;
-    private String userId;
-    private String commodityName;
-    private double price;
-    private String image;
-    private Integer commodityNumber;
-    private String Introduction;
+    private String buyer;
+    private String seller;
+    private Integer purchaseQuantity;
     private String address;
-    private String Label;
-    private String contact;
-    private int version;
+    private int status;
     private Date createTime;
+    private Date endTime;
 }

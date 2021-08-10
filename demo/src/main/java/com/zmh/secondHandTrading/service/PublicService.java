@@ -23,5 +23,5 @@ public interface PublicService {
     public CommonPage<Commodity> serachCommodityByLabel(String lable,String order,String clause,Integer pageStart, Integer pageSize);
 
     // 处理redis消息队列
-    public void handleQueue(String commodityId);
+    public void handleQueue(String commodityId,String orderId);
 }

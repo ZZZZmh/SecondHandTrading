@@ -12,6 +12,7 @@ import com.github.pagehelper.PageInfo;
 import com.zmh.secondHandTrading.entity.model.*;
 import com.zmh.secondHandTrading.entity.pojo.Account;
 import com.zmh.secondHandTrading.entity.pojo.Commodity;
+import com.zmh.secondHandTrading.entity.pojo.OrderForm;
 import com.zmh.secondHandTrading.entity.pojo.Userinfo;
 import com.zmh.secondHandTrading.mapper.CommodityMapper;
 import com.zmh.secondHandTrading.mapper.OrderFormMapper;
@@ -33,6 +34,7 @@ import redis.clients.jedis.Transaction;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -117,7 +119,7 @@ public class UserServiceImpl  implements UserService {
         map.put("id", account.getUserId());
         map.put("user_name",model.getRealName());
         map.put("id_card",model.getIdCard());
-        map.put("real_name",model.getStudentId());
+        map.put("real_name",model.getRealName());
         map.put("student_id",model.getStudentId());
         map.put("power",2);
         userMapper.updateAccount(map);
@@ -215,20 +217,32 @@ public class UserServiceImpl  implements UserService {
     }
 
     @Override
-    public int enterQueue(String commodityId,int commodityNumber,int purchaseQuantity,String address) {
+    public int enterQueue(String commodityId,int purchaseQuantity,String address) {
         // key:商品id item:数量  value:商品数量
         // 商品信息是否已进redis
         if(!redisUtil.hHasKey(commodityId,"commodityNumber")){
             // 不存在则加入
-            redisUtil.hset(commodityId, "commodityNumber",commodityNumber);
-            // 有效时间15分钟
+            // 获取商品信息
+            Map<String,Object> map = new HashMap();
+            map.put("commodityId",commodityId);
+            List<Commodity> list = commodityMapper.selectCommodity(map);
+            if(list.isEmpty()){
+                return -2;
+            }
+            // 添加
+            redisUtil.hset(commodityId, "commodityNumber",list.get(0).getCommodityNumber());
+            redisUtil.hset(commodityId, "commodityName",list.get(0).getCommodityName());
+            redisUtil.hset(commodityId, "seller",list.get(0).getUserId());
+            redisUtil.hset(commodityId, "price",list.get(0).getPrice());
+            // 有效时间30分钟
             redisUtil.expire(commodityId,30*60);
         }
         Subject subject = SecurityUtils.getSubject();
         Account account= (Account) subject.getPrincipal();
+        // 入队
         // 选择redis数据库
-        Jedis jedis = new Jedis("******************", 6379);
-        jedis.auth("********************");
+        Jedis jedis = new Jedis("****************", 6379);
+        jedis.auth("**************");
         jedis.select(1);
         // 开启事务
         Transaction multi = jedis.multi();
@@ -245,53 +259,90 @@ public class UserServiceImpl  implements UserService {
             // 放弃事务
             multi.discard();
         }
-        // 添加订单到redis
+        // 添加购买信息到redis
         redisUtil.hset(account.getUserId(),"commodityId",commodityId);
         redisUtil.hset(account.getUserId(),"purchaseQuantity",purchaseQuantity);
         redisUtil.hset(account.getUserId(),"address",address);
         redisUtil.hset(account.getUserId(),"result",0);
-        // 订单有效时间(15分钟)
-        redisUtil.expire(commodityId,15*60);
+        // 购买信息有效时间(15分钟)
+        redisUtil.expire(account.getUserId(),15*60);
         return 1;
     }
 
     @Override
-    public int buyCommodity(String userid) throws Exception{
+    public int buyCommodity(String userid,String orderId) throws Exception{
         Map<String,Object> map = new HashMap<>();
         String commodityId = (String) redisUtil.hget(userid,"commodityId");
         Integer purchaseQuantity = (Integer) redisUtil.hget(userid,"purchaseQuantity");
         // 被购买的商品id
         map.put("commodityId",commodityId);
+        // 买家
+        map.put("buyer",userid);
+        map.put("seller",redisUtil.hget(commodityId,"seller"));
         // 从redis中查询剩余商品数量
         Integer number = (Integer) redisUtil.hget(commodityId,"commodityNumber");
         // 购买失败，商品已售尽
         if(number==0){
+            // 更新商品状态
             map.put("status",4);
             commodityMapper.updateCommodity(map);
+            // 清除异常订单
+            redisUtil.hdel(userid,"commodityId");
+            redisUtil.hdel(userid,"purchaseQuantity");
+            redisUtil.hdel(userid,"address");
+            redisUtil.hdel(userid,"result");
             return -3;
         }
         // 购买失败：购买数量大与商品数量
         if(number < purchaseQuantity){
+            // 清除异常订单
+            redisUtil.hdel(userid,"commodityId");
+            redisUtil.hdel(userid,"purchaseQuantity");
+            redisUtil.hdel(userid,"address");
+            redisUtil.hdel(userid,"result");
             return -2;
         }
         // redis更新商品信息
         redisUtil.hset(commodityId, "commodityNumber", number-purchaseQuantity);
         // 商品数量减去购买数量
         map.put("commodityNumber",number-purchaseQuantity);
-        // 修改商品数量
-        if(commodityMapper.updateCommodity(map)==1){
-            // 商品数量修改成功则增加订单表
+        // 更新商品数量
+        if (commodityMapper.updateCommodity(map) == 1) {
+            // 之前有订单
+            if(orderId!=null && !orderId.equals("")){
+                map.put("orderId",orderId);
+                map.put("status", 2);
+                if(orderFormMapper.updateOrderForm(map)==1){
+                    // 清除在redis中的订单(数据库已生成标准订单，已经可在数据库中查询)
+                    redisUtil.hdel(userid,"commodityId");
+                    redisUtil.hdel(userid,"purchaseQuantity");
+                    redisUtil.hdel(userid,"address");
+                    redisUtil.hdel(userid,"result");
+                    return  1;
+                }else {
+                    return -1;
+                }
+            }
+            // 之前没有订单则生成
             Snowflake snowflake = IdUtil.createSnowflake(1, 1);
             long id = snowflake.nextId();
-            map.put("orderId",id);
-            map.put("buyer",userid);
-            map.put("purchaseQuantity",purchaseQuantity);
-            map.put("address",redisUtil.hget(userid,"address"));
+            map.put("orderId", id);
+            map.put("purchaseQuantity", purchaseQuantity);
+            map.put("address", redisUtil.hget(userid, "address"));
             // 已付款
-            map.put("status",2);
-            map.put("createTime",new Date());
-            orderFormMapper.addOrderForm(map);
-            return 1;
+            map.put("status", 2);
+            map.put("createTime", new Date());
+            //  添加订单
+            if(orderFormMapper.addOrderForm(map)==1){
+                // 清除在redis中的订单(数据库已生成标准订单，已经可在数据库中查询)
+                redisUtil.hdel(userid,"commodityId");
+                redisUtil.hdel(userid,"purchaseQuantity");
+                redisUtil.hdel(userid,"address");
+                redisUtil.hdel(userid,"result");
+                return 1;
+            }else{
+                return -1;
+            }
         }
         return -1;
     }
