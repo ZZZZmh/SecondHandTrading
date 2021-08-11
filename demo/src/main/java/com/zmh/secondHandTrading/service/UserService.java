@@ -3,9 +3,11 @@ package com.zmh.secondHandTrading.service;
 import com.zmh.secondHandTrading.entity.model.*;
 import com.zmh.secondHandTrading.entity.pojo.Commodity;
 import com.zmh.secondHandTrading.entity.pojo.Userinfo;
+import com.zmh.secondHandTrading.entity.resp.UserInfoResp;
 import com.zmh.secondHandTrading.util.CommonPage;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 /**
@@ -18,7 +20,7 @@ import java.util.Map;
 public interface UserService {
 
     // 查看用户所有信息
-    public Userinfo userInformation(String userId);
+    public UserInfoResp userInformation(HttpSession session, String userId);
 
     // 更新个人信息
     public int userInforUpate(UpdateUserinfoModel model);

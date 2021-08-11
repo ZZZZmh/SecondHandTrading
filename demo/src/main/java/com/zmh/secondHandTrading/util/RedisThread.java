@@ -32,8 +32,8 @@ public class RedisThread implements  Runnable{
     private String orderId;
 
     public RedisThread(){
-        jedis = new Jedis("*************", 6379);
-        jedis.auth("*****************");
+        jedis = new Jedis("**************", 6379);
+        jedis.auth("********************");
         jedis.select(1);
     }
 

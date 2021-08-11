@@ -14,6 +14,7 @@ import com.zmh.secondHandTrading.entity.pojo.Account;
 import com.zmh.secondHandTrading.entity.pojo.Commodity;
 import com.zmh.secondHandTrading.entity.pojo.OrderForm;
 import com.zmh.secondHandTrading.entity.pojo.Userinfo;
+import com.zmh.secondHandTrading.entity.resp.UserInfoResp;
 import com.zmh.secondHandTrading.mapper.CommodityMapper;
 import com.zmh.secondHandTrading.mapper.OrderFormMapper;
 import com.zmh.secondHandTrading.mapper.UserMapper;
@@ -32,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
 
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -57,10 +59,17 @@ public class UserServiceImpl  implements UserService {
     RedisUtil redisUtil;
 
     @Override
-    public Userinfo userInformation(String userId) {
-        Userinfo user = userMapper.selectAllInformation(userId);
-        user.toString();
-        return user;
+    public UserInfoResp userInformation(HttpSession session,String userId) {
+        Userinfo userinfo = userMapper.selectAllInformation(userId);
+        // 打包处理封装信息返回前端
+        UserInfoResp userInfoResp = new UserInfoResp();
+        userInfoResp.setUserName(userinfo.getUserName());
+        userInfoResp.setSignature(userinfo.getSignature());
+        userInfoResp.setRealName(userinfo.getRealName());
+        userInfoResp.setHeadPortrait(userinfo.getHeadPortrait());
+        userInfoResp.setStudentId(userinfo.getStudentId());
+        session.setAttribute("userInfo",userInfoResp);
+        return userInfoResp;
     }
 
     @Override
@@ -247,11 +256,11 @@ public class UserServiceImpl  implements UserService {
         // 开启事务
         Transaction multi = jedis.multi();
         try {
-            // 将用户排到对应的商品id的数组里面
+            // 用户之前是否有订单
             if(redisUtil.hHasKey(account.getUserId(),"commodityId")){
-                // 用户已经下订单了
                 return -1;
             }
+            // 将用户排到对应的商品id的数组里面
             multi.lpush(commodityId,account.getUserId());
             // 执行事务
             multi.exec();
@@ -278,6 +287,7 @@ public class UserServiceImpl  implements UserService {
         map.put("commodityId",commodityId);
         // 买家
         map.put("buyer",userid);
+        // 卖家
         map.put("seller",redisUtil.hget(commodityId,"seller"));
         // 从redis中查询剩余商品数量
         Integer number = (Integer) redisUtil.hget(commodityId,"commodityNumber");
@@ -312,6 +322,7 @@ public class UserServiceImpl  implements UserService {
             if(orderId!=null && !orderId.equals("")){
                 map.put("orderId",orderId);
                 map.put("status", 2);
+                // 更新之前订单
                 if(orderFormMapper.updateOrderForm(map)==1){
                     // 清除在redis中的订单(数据库已生成标准订单，已经可在数据库中查询)
                     redisUtil.hdel(userid,"commodityId");

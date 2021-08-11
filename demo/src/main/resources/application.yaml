@@ -1,11 +1,11 @@
 ################################
-# 配置 druid,redis,email
+# 配置 druid,eamil,redis,mongodb
 ################################
 spring:
   datasource:
-    url: jdbc:mysql://**************************/secondHandTrading
-    username: ************
-    password: ***************
+    url: jdbc:mysql://****************/secondHandTrading
+    username: ****************
+    password: ****************
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     initialSize: 5
@@ -24,22 +24,29 @@ spring:
     maxPoolPreparedStatementPerConnectionSize: 20
     useGlobalDataSourceStat: true
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
-  redis:
-    database: 0
-    host: ******************
-    port: 6379
-    password: **********************
   mail:
     # 服务器
     host: smtp.163.com
     # 用户名
     username: z1784144558@163.com
     # POP3/SMTP服务授权码
-    password: ******************************
+    password: ****************
     # 开启加密认证(QQ邮箱独有SSL加密)
     # properties: [mail.smtp.ssl.enable : true]
     default-encoding: UTF-8
     protocol: smtp
+  redis:
+    database: 0
+    host: ****************
+    port: 6379
+    password: ****************
+  data:
+    mongodb:
+      database: commentdb
+      host: ****************
+      port: 27017
+      username: zmh
+      password: ****************
 
 ################################
 # 配置 Mybatis

@@ -6,13 +6,14 @@ package com.zmh.secondHandTrading.controller;/**
  * @date 2021/7/25 15:52
  */
 
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zmh.secondHandTrading.entity.model.*;
 import com.zmh.secondHandTrading.entity.pojo.Account;
 import com.zmh.secondHandTrading.entity.pojo.OrderForm;
-import com.zmh.secondHandTrading.entity.pojo.Userinfo;
 import com.zmh.secondHandTrading.entity.resp.UserInfoResp;
 import com.zmh.secondHandTrading.myEnum.ResultCode;
+import com.zmh.secondHandTrading.service.impl.CommentServiceImpl;
 import com.zmh.secondHandTrading.service.impl.OrderServiceImpl;
 import com.zmh.secondHandTrading.service.impl.PublicServiceImpl;
 import com.zmh.secondHandTrading.service.impl.UserServiceImpl;
@@ -23,13 +24,16 @@ import com.zmh.secondHandTrading.util.RedisUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.sql.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,6 +53,8 @@ public class UserController {
     @Autowired
     OrderServiceImpl orderService;
     @Autowired
+    CommentServiceImpl commentService;
+    @Autowired
     RedisUtil redisUtil;
 
     // 用户信息
@@ -56,16 +62,8 @@ public class UserController {
     public CommonResult serachInfo(HttpSession session){
         Subject subject = SecurityUtils.getSubject();
         Account account= (Account) subject.getPrincipal();
-        Userinfo userinfo = userService.userInformation(account.getUserId());
-        // 打包处理封装信息返回前端
-        UserInfoResp userInfoResp = new UserInfoResp();
-        userInfoResp.setUserName(userinfo.getUserName());
-        userInfoResp.setSignature(userinfo.getSignature());
-        userInfoResp.setRealName(userinfo.getRealName());
-        userInfoResp.setHeadPortrait(userinfo.getHeadPortrait());
-        userInfoResp.setStudentId(userinfo.getStudentId());
-        session.setAttribute("userInfo",userInfoResp);
-        return CommonResult.success(userInfoResp);
+        UserInfoResp userinfo = userService.userInformation(session,account.getUserId());
+        return CommonResult.success(userinfo);
     }
 
     // 更新用户用户名，个性签名
@@ -142,6 +140,8 @@ public class UserController {
         return CommonResult.success(userService.selectOwnCommodity(pageNo, pageSize));
     }
 
+    // 下架自己的商品
+
     // 更新商品信息
     @PostMapping("/user/commodity/updateOwnCommodity")
     public CommonResult updateOwnCommodity(@RequestBody UpdateCommodityModel model){
@@ -180,6 +180,7 @@ public class UserController {
 
     // 购物车删除
 
+
     // 增加订单
     @PostMapping("/user/commodity/addOrderForm")
     public CommonResult addOrderForm(@RequestBody OrderFormModel model){
@@ -195,7 +196,6 @@ public class UserController {
         return CommonResult.failed(ResultCode.FAILED,"订单更新失败");
     }
 
-    // 取消订单
 
     // 购买商品(redis)
     @PostMapping("/user/commodity/buy")
@@ -260,7 +260,7 @@ public class UserController {
         map.put("orderId",orderId);
         map.put("status",4);
         if(orderService.update(map) == 1){
-            return CommonResult.success("拒签成功");
+            return CommonResult.success("拒签成功,请选择退款或客服介入");
         }
         return CommonResult.failed(ResultCode.FAILED,"拒签失败");
     }
@@ -279,7 +279,6 @@ public class UserController {
 
 
     // 退款处理(商家)
-    // 拒签
     @PostMapping("/user/commodity/merchantRefund")
     public CommonResult merchantRefund(@RequestParam String orderId){
         Map<String,Object> map = new HashMap<>();
@@ -297,6 +296,7 @@ public class UserController {
         Map<String,Object> map = new HashMap<>();
         map.put("orderId",orderId);
         map.put("status",3);
+        map.put("endTime",new Date(System.currentTimeMillis()));
         if(orderService.update(map) == 1){
             return CommonResult.success("收货成功");
         }
@@ -405,9 +405,65 @@ public class UserController {
         PageInfo<OrderForm> pageInfo = new PageInfo<>(orderService.select(map));
         return CommonResult.success(CommonPage.restPage(pageInfo));
     }
-    // 评论
 
-    // 评论点赞（点踩）
+    // 评论
+    @PostMapping("/user/commodity/addcomment")
+    public CommonResult addcomment(@RequestBody CommentModel model,HttpSession session){
+        // 是否购买过该商品
+        Map<String,Object> map = new HashMap<>();
+        map.put("orderId",model.getOrderId());
+        map.put("status",3);
+        if(orderService.select(map).isEmpty()){
+            return CommonResult.failed(ResultCode.FAILED,"未查询到此订单");
+        }
+        // 是否已经评论
+        if(commentService.queryOwnOne(model.getOrderId())!=null){
+            return CommonResult.failed(ResultCode.FAILED,"您已经评论过该商品");
+        }
+        commentService.addcomment(model,session);
+        return CommonResult.success("评论成功");
+    }
+
+    // 查询某商品自己的评论
+    @PostMapping("/user/commodity/queryOwnOne")
+    public CommonResult queryOwnOne(@RequestParam String orderId){
+        if(commentService.queryOwnOne(orderId) == null){
+            return CommonResult.failed(ResultCode.FAILED,"未找到您的评论");
+        }
+        return CommonResult.success(commentService.queryOwnOne(orderId));
+    }
+
+    // 上传评论图片
+    @PostMapping("/user/commodity/updateCommentImg")
+    public CommonResult updateCommentImg(MultipartFile file,String commentId){
+        commentService.updateCommentImg(ImageUtil.upload(file),commentId);
+        return CommonResult.success("添加成功");
+    }
+
+
+    // 评论点赞
+    @PostMapping("/user/commodity/Likenumicr")
+    public CommonResult updateCommentLikenum(@RequestParam String commentId){
+        if(commentService.updateCommentLikenum(commentId)==-1){
+            return CommonResult.failed(ResultCode.FAILED,"您已经点赞过了");
+        }
+        return CommonResult.success("点赞成功");
+    }
+
+    // 取消点赞
+    @PostMapping("/user/commodity/cancelLike")
+    public CommonResult cancelLike(@RequestParam String commentId){
+        commentService.cancelLike(commentId);
+        return CommonResult.success("点赞已取消");
+    }
+
+
+    // 用户删除评论
+    @PostMapping("/user/commodity/deleteComment")
+    public CommonResult deleteComment(@RequestParam String commentId){
+        commentService.deleteComment(commentId);
+        return CommonResult.success("删除成功");
+    }
 
     // 申请售后
 

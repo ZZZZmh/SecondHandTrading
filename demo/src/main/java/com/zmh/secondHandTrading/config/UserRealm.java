@@ -10,6 +10,7 @@ package com.zmh.secondHandTrading.config;/**
 import com.zmh.secondHandTrading.entity.pojo.Account;
 import com.zmh.secondHandTrading.mapper.LoginMapper;
 import com.zmh.secondHandTrading.service.impl.UserServiceImpl;
+import com.zmh.secondHandTrading.util.GetSession;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -81,6 +82,7 @@ public class UserRealm  extends AuthorizingRealm {
         // 密码验证
         // shiro 安全框架负责验证  MD5密码加密  MD5言文加密
         // 第一个参数为返回当前用户（此处返回查询到的Account给doGetAuthorizationInfo授权）,放入subject中
+        userService.userInformation(GetSession.getSession(),account.getUserId());
         return new SimpleAuthenticationInfo(account,account.getPassword(),"");
     }
 }

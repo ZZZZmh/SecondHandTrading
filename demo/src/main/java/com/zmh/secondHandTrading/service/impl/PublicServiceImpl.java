@@ -75,6 +75,7 @@ public class PublicServiceImpl implements PublicService {
     public CommonPage<Commodity> serachCommodityByLabel(@RequestParam String lable, String order,String clause,Integer pageStart, Integer pageSize) {
         Map<String,Object> map = new HashMap();
         map.put("lable",lable);
+        map.put("status",2);
         // 默认按金钱排序
         if(clause==null || clause.equals("")){
             map.put("clause","price");
